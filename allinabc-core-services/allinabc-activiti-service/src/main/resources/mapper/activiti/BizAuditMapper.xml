@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.allinabc.cloud.activiti.mapper.BizAuditMapper">
+
+	<select id="selectAuditorByProcessinsId" resultType="com.allinabc.cloud.activiti.pojo.po.BizAudit">
+		select AUDITOR,CREATE_TM,TASK_DEF_KEY from ACTDA1.BIZ_AUDIT where  TASK_DEF_KEY=#{auditNodeKey} and PROC_INST_ID=#{processInsId} and PROC_DEF_KEY=#{processDefinitionKey}  order by CREATE_TM desc
+	</select>
+
+	<select id="selectTaskCommentByProcessId" resultType="com.allinabc.cloud.activiti.pojo.vo.BizAuditVO">
+    select b.NODE_NAME as taskName,a.ID, a.TASK_ID, a.ACTION, a.decision,a.TRANSFERRED_USER,a.PRINCIPAL_USER, a.PROC_DEF_KEY, a.APPLYER, a.AUDITOR, a.FLAG,a.CREATE_TM, a.TASK_DEF_KEY, a.PROC_INST_ID, a.USER_TYPE
+    from ACTDA1.BIZ_AUDIT a left join ADMINDA1.ADM_FORM_ACTIVITI_DEF b on a.TASK_DEF_KEY=b.NODE_KEY
+     where a.PROC_INST_ID=#{processInstId} order by a.CREATE_TM desc
+	</select>
+
+    <select id="selectBizAuditByBasicInfoIdAndProcessInstId" resultType="com.allinabc.cloud.activiti.pojo.po.BizAudit">
+		select id, task_id, action, decision, proc_def_key, applyer, auditor,  create_tm, task_def_key, proc_inst_id, user_type, principal_user, transferred_user, basic_info_id from ACTDA1.BIZ_AUDIT where BASIC_INFO_ID='' and PROC_INST_ID='2' and FLAG='0'select id, task_id, action, decision, proc_def_key, applyer, auditor,  create_tm, task_def_key, proc_inst_id, user_type, principal_user, transferred_user, basic_info_id from ACTDA1.BIZ_AUDIT
+		where BASIC_INFO_ID=#{basicInfoId}
+		and PROC_INST_ID=#{processInstId}
+		and FLAG='0'
+		order by CREATE_TM DESC
+	</select>
+</mapper>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.allinabc.cloud.notice.mapper.NoticeInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.allinabc.cloud.notice.pojo.dto.NoticeInfoModel" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="notice_type_code" property="noticeTypeCode" jdbcType="VARCHAR" />
+        <result column="send_type" property="sendType" jdbcType="CHAR" />
+        <result column="subject" property="subject" jdbcType="VARCHAR" />
+        <result column="content" property="content" jdbcType="LONGVARCHAR" />
+        <result column="is_html" property="isHtml" jdbcType="BIT" />
+        <result column="notice_from" property="noticeFrom" jdbcType="VARCHAR" />
+        <result column="send_time" property="sendTime" jdbcType="TIMESTAMP" />
+        <result column="status" property="status" jdbcType="CHAR" />
+        <result column="notice_way" property="noticeWay" jdbcType="CHAR" />
+        <result column="need_retry" property="needRetry" jdbcType="BIT" />
+        <result column="retry_count" property="retryCount" jdbcType="INTEGER" />
+        <collection property="noticeParticipantModels" ofType="com.allinabc.cloud.notice.pojo.dto.NoticeParticipantModel">
+            <result column="participant_type" property="participantType" jdbcType="VARCHAR" />
+            <result column="object_type" property="objectType" jdbcType="VARCHAR" />
+            <result column="object_id" property="objectId" jdbcType="VARCHAR" />
+        </collection>
+    </resultMap>
+
+    <update id="updateStatusById">
+       update nte_notice_info set status=#{status,jdbcType=VARCHAR}
+       where id=#{id,jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateRetryCountById">
+       update nte_notice_info set retry_count=#{retryCount,jdbcType=INTEGER}
+       where id=#{id,jdbcType=VARCHAR}
+    </update>
+
+    <select id="selectNoticeInfo" resultMap="BaseResultMap">
+     select a.id, a.notice_type_code, a.send_type, a.subject, a.content, a.notice_from, a.send_time, a.status, a.notice_way, a.need_retry, a.retry_count ,
+     b.participant_type,b.object_type,b.object_id
+     from nte_notice_info a
+     left join nte_notice_participant b on a.id = b.notice_id
+     where a.send_type=#{sendType,jdbcType=VARCHAR} and a.notice_way='1' and a.status='0' and b.is_available='Y'
+    </select>
+
+</mapper>

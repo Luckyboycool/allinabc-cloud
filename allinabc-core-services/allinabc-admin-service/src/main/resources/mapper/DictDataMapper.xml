@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.allinabc.cloud.admin.mapper.DictDataMapper">
+
+    <select id="getDictValueByTypeAndCode" resultType="com.allinabc.cloud.admin.pojo.po.DictData">
+        select d.id, d.dict_type, d.dict_label, d.dict_value, d.dict_sort, d.is_default, d.list_class, d.css_class, d.status, d.remark, d.created_by, d.create_tm, d.updated_by, d.update_tm
+        FROM  ADM_DICT_DATA d LEFT JOIN ADM_dict_type t ON t.DICT_TYPE = d.DICT_TYPE  WHERE d.DICT_TYPE =#{dictType} AND t.APP_CODE = #{appCode}
+    </select>
+
+     <select id="selectDictValueByFilter" resultType="com.allinabc.cloud.admin.pojo.po.DictData">
+        select d.id, d.dict_type, d.dict_label, d.dict_value, d.dict_sort, d.is_default, d.dict_group_type,d.list_class, d.css_class, d.status, d.remark, d.created_by, d.create_tm, d.updated_by, d.update_tm
+        FROM  ADM_DICT_DATA d LEFT JOIN ADM_dict_type t ON t.DICT_TYPE = d.DICT_TYPE
+        <where>
+            <if test="appCode!=null and appCode!=''">
+                t.APP_CODE = #{appCode}
+            </if>
+            <if test="type!=null and type!=''">
+                and d.DICT_GROUP_TYPE = #{type}
+            </if>
+            <if test="ls != null and ls.length>0">
+                and d.DICT_TYPE in
+                <foreach collection="ls" item="item" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+</mapper>

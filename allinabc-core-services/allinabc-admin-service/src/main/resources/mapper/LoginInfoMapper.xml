@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.allinabc.cloud.admin.mapper.LoginInfoMapper">
+
+    <update id="cleanLoginInfo">
+      TRUNCATE TABLE ADM_LOGIN_INFO
+    </update>
+    <update id="updateLogoutTime">
+        UPDATE ADM_LOGIN_INFO SET LOGOUT_TIME = SYSDATE  WHERE  ID = #{id} AND STATUS = 0
+    </update>
+
+    <select id="pageList" resultType="com.allinabc.cloud.admin.pojo.po.LoginInfo">
+        SELECT * FROM ADMINDA1.ADM_LOGIN_INFO
+        <where>
+            <if test="username != null and username != ''">
+                USER_NAME = #{username} AND
+            </if>
+            STATUS = 0
+        </where>
+        ORDER BY LOGIN_TIME DESC
+    </select>
+
+    <select id="getLastLoginInfo" resultType="com.allinabc.cloud.admin.pojo.po.LoginInfo">
+        SELECT b.* FROM (SELECT a.*,ROWNUM as no FROM (SELECT  * FROM ADM_LOGIN_INFO
+        WHERE STATUS = 0 AND USER_ID =#{userId} AND USER_TYPE = #{userType} ORDER BY LOGIN_TIME DESC) a WHERE ROWNUM
+        <![CDATA[
+          <3
+        ]]>
+        ) b where no =2
+    </select>
+
+    <select id="lastSuccessInfo" resultType="com.allinabc.cloud.admin.pojo.po.LoginInfo">
+        SELECT a.* FROM (SELECT  * FROM ADM_LOGIN_INFO
+        WHERE STATUS = 0 AND USER_ID = #{userId, jdbcType=VARCHAR} AND USER_TYPE = #{userType, jdbcType=VARCHAR} ORDER BY LOGIN_TIME DESC) a WHERE ROWNUM
+        <![CDATA[
+            < 2
+        ]]>
+    </select>
+
+</mapper>

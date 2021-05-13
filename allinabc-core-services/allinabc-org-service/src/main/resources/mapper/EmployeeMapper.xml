@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.allinabc.cloud.org.mapper.EmployeeMapper">
+
+    <select id="selectPageVo" resultType="com.allinabc.cloud.org.pojo.vo.EmployeeDeptVO">
+        SELECT e.ID, e.JOB_NUMBER, e.TELEPHONE,e.NAME,
+            e.EMAIL,d.NAME as deptName
+               FROM ORG_EMPLOYEE e
+                   LEFT JOIN ORG_DEPARTMENT d ON e.DEPT_ID = d.ID
+        <where>
+            <if test="keyword!=null and keyword!=''">
+                (UPPER(e.JOB_NUMBER) like UPPER(concat(#{keyword}, '%')) OR
+                UPPER(e.EMAIL) like UPPER(concat(#{keyword}, '%')) OR
+                UPPER(e.NAME) like UPPER(concat(#{keyword}, '%')) OR
+                UPPER(e.TELEPHONE) like UPPER(concat(#{keyword}, '%')))
+            </if>
+
+            <if test="deptIdList != null and deptIdList.size != 0">
+                AND e.DEPT_ID IN
+                <foreach collection="deptIdList" item="deptId" open="(" close=")" separator=",">
+                    #{deptId}
+                </foreach>
+            </if>
+            AND e.STATUS = 1
+        </where>
+        ORDER BY e.JOB_NUMBER DESC
+    </select>
+
+    <select id="selectBatchPid" resultType="com.allinabc.cloud.org.pojo.po.Employee">
+        SELECT * FROM ORGDA1.ORG_EMPLOYEE
+        <where>
+            STATUS = 1
+            <if test="deptIds != null and deptIds.size != 0">
+                AND DEPT_ID IN
+                <foreach collection="deptIds" item="deptId" open="(" close=")" separator=",">
+                    #{deptId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

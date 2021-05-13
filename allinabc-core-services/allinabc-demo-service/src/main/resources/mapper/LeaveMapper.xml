@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.allinabc.cloud.demo.mapper.LeaveMapper">
+    <resultMap id="BaseLeaveResultMap" type="com.allinabc.cloud.demo.pojo.vo.LeaveVO" >
+        <result column="REASON" property="reason" jdbcType="VARCHAR" />
+        <result column="DAYS" property="days" jdbcType="DECIMAL" />
+        <collection property="basicFormList" ofType="com.allinabc.cloud.starter.form.domain.BasicForm">
+            <id column="ID" property="id" jdbcType="VARCHAR" />
+            <result column="PID" property="pid" jdbcType="VARCHAR" />
+            <result column="VERSION" property="version" jdbcType="DECIMAL" />
+            <result column="SUBJECT" property="subject" jdbcType="VARCHAR" />
+            <result column="REQUEST_NO" property="requestNo" jdbcType="VARCHAR" />
+            <result column="APP_CODE" property="appCode" jdbcType="VARCHAR" />
+            <result column="FORM_TYPE" property="formType" jdbcType="VARCHAR" />
+            <result column="PROCESS_ID" property="processId" jdbcType="VARCHAR" />
+            <result column="INSTANCE_ID" property="instanceId" jdbcType="VARCHAR" />
+            <result column="DRAFTER" property="drafter" jdbcType="VARCHAR" />
+            <result column="REQUESTER" property="requester" jdbcType="VARCHAR" />
+            <result column="REQUEST_TIME" property="requestTime" jdbcType="TIMESTAMP" />
+            <result column="IS_DRAFT" property="isDraft" jdbcType="VARCHAR" />
+            <result column="STATUS" property="status" jdbcType="VARCHAR" />
+            <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+            <result column="CREATED_BY" property="createdBy" jdbcType="VARCHAR" />
+            <result column="CREATE_TM" property="createTm" jdbcType="TIMESTAMP" />
+            <result column="UPDATED_BY" property="updatedBy" jdbcType="VARCHAR" />
+            <result column="UPDATE_TM" property="updateTm" jdbcType="TIMESTAMP" />
+        </collection>
+
+    </resultMap>
+
+
+    <select id="selectLeaveById" resultMap="BaseLeaveResultMap">
+    SELECT A.REASON,A.DAYS,B.ID, PID, VERSION, SUBJECT, REQUEST_NO, APP_CODE, FORM_TYPE, PROCESS_ID, INSTANCE_ID, DRAFTER, REQUESTER, REQUEST_TIME, IS_DRAFT, STATUS, REMARK, CREATED_BY, CREATE_TM, UPDATED_BY, UPDATE_TM
+    FROM ADM_LEAVE A LEFT JOIN ADM_BASIC_FORM B ON A.ID=B.PID WHERE A.ID=#{pid,jdbcType=VARCHAR}
+    </select>
+
+</mapper>

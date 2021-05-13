@@ -1,0 +1,9 @@
+com/allinabc/cloud/activiti/api/service/api/ApiFormPermissionService.class
+com/allinabc/cloud/activiti/api/service/impl/feign/client/ProcessServiceApi.class
+com/allinabc/cloud/activiti/api/service/api/ApiGtaRequestNoService.class
+com/allinabc/cloud/activiti/api/service/api/ApiProcessService.class
+com/allinabc/cloud/activiti/api/service/impl/feign/impl/ApiFeignProcessServiceImpl.class
+com/allinabc/cloud/activiti/api/service/impl/feign/impl/ApiFormPermissionServiceImpl.class
+com/allinabc/cloud/activiti/api/service/impl/feign/client/FormPermissionServiceApi.class
+com/allinabc/cloud/activiti/api/service/impl/feign/client/GtaRequestNoServiceApi.class
+com/allinabc/cloud/activiti/api/service/impl/feign/impl/ApiFeignGtaRequestNoServiceImpl.class

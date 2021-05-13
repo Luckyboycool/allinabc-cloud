@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.allinabc.cloud.activiti.mapper.TaskMapper">
+
+
+    <select id="findTaskIngFuzzySearch" resultType="com.allinabc.cloud.activiti.pojo.vo.TaskModel">
+   select s.TASK_DEF_KEY_ as taskDefinitionKey,s.taskId as taskId,s.form_type,s.KEY_ as processDefinitionKey ,s.PROC_INST_ID_ as instanceId,s.businessId,s.REQUESTER,s.REQUEST_TIME,s.REQUEST_NO,s.SUBJECT
+        ,s.DISPLAY_NUMBER_NAME as  nameAndJobNumber,s.NAME as requesterName
+   from
+     (select distinct RES.* ,RES.ID_ as taskId,D.KEY_,m.form_type, m.id as businessId,m.REQUESTER,m.REQUEST_TIME,m.REQUEST_NO,m.SUBJECT,e.NAME,e.DISPLAY_NUMBER_NAME  from ACT_RU_TASK RES
+    left join ACT_RU_IDENTITYLINK I on I.TASK_ID_ = RES.ID_ inner join ACT_RE_PROCDEF D on RES.PROC_DEF_ID_ = D.ID_
+    inner join ADMINDA1.ADM_BASIC_FORM m on m.INSTANCE_ID=res.PROC_INST_ID_ left join ORGDA1.V_USER_INFO e on e.ID=m.REQUESTER
+    <where>
+        (RES.ASSIGNEE_ = #{taskParam.userId} or (RES.ASSIGNEE_ is null and I.TYPE_ = 'candidate' and (I.USER_ID_ = #{taskParam.userId})))
+     <if test="taskParam.processDefKey!=null and taskParam.processDefKey!=''">
+         and D.KEY_  IN
+        <foreach collection="ls" item="item" separator="," open="(" close=")">
+           #{item}
+        </foreach>
+     </if>
+     <if test="taskParam.requesterName!=null and taskParam.requesterName!=''">
+       and UPPER(e.NAME) like UPPER('%'||#{taskParam.requesterName}||'%')
+     </if>
+     <if test="taskParam.subject!=null and taskParam.subject!=''">
+       and UPPER(m.SUBJECT) like UPPER('%'||#{taskParam.subject}||'%')
+     </if>
+     <if test="taskParam.requestNo!=null and taskParam.requestNo!=''">
+        and UPPER(m.REQUEST_NO) like UPPER('%'||#{taskParam.requestNo}||'%')
+     </if>
+     <if test="taskParam.requestTm!=null and taskParam.requestTm!=''">
+        and m.REQUEST_TIME > to_date(to_char(#{taskParam.requestTm},'yyyy-mm-dd')||' 00:00:00','yyyy-mm-dd hh24:mi:ss')
+     </if>
+     <if test="taskParam.requestStartTm!=null and taskParam.requestEndTm!=null">
+        and m.REQUEST_TIME between to_date(to_char(#{taskParam.requestStartTm},'yyyy-mm-dd')||' 00:00:00','yyyy-mm-dd hh24:mi:ss')
+        and to_date(to_char(#{taskParam.requestEndTm},'yyyy-mm-dd')||' 23:59:59','yyyy-mm-dd hh24:mi:ss')
+     </if>
+     <if test="taskParam.formType!=null and taskParam.formType!=''">
+            and UPPER(m.FORM_TYPE) like UPPER('%'||#{taskParam.formType}||'%')
+        </if>
+    </where>
+        order by
+        <choose>
+            <when test="taskParam != null and taskParam.sortParam != null and taskParam.sortParam.size > 0">
+                m.${taskParam.sortParam.field}  ${taskParam.sortParam.method}
+            </when>
+            <otherwise>
+                m.REQUEST_TIME desc
+            </otherwise>
+        </choose>
+          ) s
+    </select>
+
+
+    <select id="findTaskIng" resultType="com.allinabc.cloud.activiti.pojo.vo.TaskModel">
+    select s.TASK_DEF_KEY_ as taskDefinitionKey,s.taskId as taskId,s.KEY_ as processDefinitionKey ,s.form_type,s.PROC_INST_ID_ as instanceId,s.businessId,s.REQUESTER,s.REQUEST_TIME,s.REQUEST_NO,s.SUBJECT
+        ,s.DISPLAY_NUMBER_NAME as  nameAndJobNumber,s.NAME as requesterName
+    from
+     (select distinct RES.* ,RES.ID_ as taskId,D.KEY_,m.form_type, m.id as businessId,m.REQUESTER,m.REQUEST_TIME,m.REQUEST_NO,m.SUBJECT,e.NAME,e.DISPLAY_NUMBER_NAME  from ACT_RU_TASK RES
+    left join ACT_RU_IDENTITYLINK I on I.TASK_ID_ = RES.ID_
+    inner join ACT_RE_PROCDEF D on RES.PROC_DEF_ID_ = D.ID_
+    inner join ADMINDA1.ADM_BASIC_FORM m on m.INSTANCE_ID=res.PROC_INST_ID_
+    left join ORGDA1.V_USER_INFO e on e.ID=m.REQUESTER
+    <where>
+    <if test="taskParam.processDefKey!=null and taskParam.processDefKey!=''">
+        D.KEY_ = #{taskParam.processDefKey} and
+    </if>
+      (RES.ASSIGNEE_ = #{taskParam.userId} or (RES.ASSIGNEE_ is null and I.TYPE_ = 'candidate' and (I.USER_ID_ = #{taskParam.userId})))
+    </where>
+    ORDER BY
+        <choose>
+            <when test="taskParam != null and taskParam.sortParam != null and taskParam.sortParam.size > 0">
+                m.${taskParam.sortParam.field}  ${taskParam.sortParam.method}
+            </when>
+            <otherwise>
+                m.REQUEST_TIME DESC
+            </otherwise>
+        </choose>
+    ) s
+
+    </select>
+
+    <select id="findTaskDoneFuzzySearch" resultType="com.allinabc.cloud.activiti.pojo.vo.TaskModel">
+        select * from (
+        select U.*,row_number() over (partition by U.instanceId ORDER BY U.startTime DESC) AS bizIndexNum from (
+        select s.TASK_DEF_KEY        as taskDefinitionKey
+        , s.TASK_ID             as taskId
+        , s.form_type
+        , s.PROC_DEF_KEY        as processDefinitionKey
+        , s.PROC_INST_ID        as instanceId
+        , s.businessId
+        , s.REQUESTER
+        , s.REQUEST_TIME
+        , s.REQUEST_NO
+        , s.SUBJECT
+        , s.DISPLAY_NUMBER_NAME as nameAndJobNumber
+        , s.NAME                as requesterName
+        ,s.CREATE_TM as startTime
+        from (
+        select m.form_type,
+        m.id                                                                      as businessId,
+        m.REQUESTER,
+        m.REQUEST_TIME,
+        m.REQUEST_NO,
+        m.SUBJECT,
+        e.DISPLAY_NUMBER_NAME,
+        e.NAME,
+        b.TASK_ID,
+        b.TASK_DEF_KEY,
+        b.PROC_INST_ID,
+        b.PROC_DEF_KEY,
+        b.CREATE_TM,
+        row_number() over (partition by b.PROC_INST_ID ORDER BY b.CREATE_TM DESC) AS indexNum
+        from ADMINDA1.ADM_BASIC_FORM m
+        inner join ACTDA1.BIZ_AUDIT b on m.INSTANCE_ID = b.PROC_INST_ID
+        left join ORGDA1.V_USER_INFO e on m.REQUESTER = e.ID
+        where b.AUDITOR = #{taskParam.userId}
+        and b.PROC_DEF_KEY IN
+        <foreach collection="ls" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        and ACTION in ('E', 'T','C_Y','C_N')
+
+        <if test="taskParam.requesterName!=null and taskParam.requesterName!=''">
+            and UPPER(e.NAME) like UPPER('%'||#{taskParam.requesterName}||'%')
+        </if>
+        <if test="taskParam.subject!=null and taskParam.subject!=''">
+            and UPPER(m.SUBJECT) like UPPER('%'||#{taskParam.subject}||'%')
+        </if>
+        <if test="taskParam.requestNo!=null and taskParam.requestNo!=''">
+            and UPPER(m.REQUEST_NO) like UPPER('%'||#{taskParam.requestNo}||'%')
+        </if>
+        <if test="taskParam.requestTm!=null and taskParam.requestTm!=''">
+            and m.REQUEST_TIME > to_date(to_char(#{taskParam.requestTm},'yyyy-mm-dd')||' 00:00:00','yyyy-mm-dd hh24:mi:ss')
+        </if>
+        <if test="taskParam.requestStartTm!=null and taskParam.requestEndTm!=null">
+            and m.REQUEST_TIME between to_date(to_char(#{taskParam.requestStartTm},'yyyy-mm-dd')||' 00:00:00','yyyy-mm-dd hh24:mi:ss')
+            and to_date(to_char(#{taskParam.requestEndTm},'yyyy-mm-dd')||' 23:59:59','yyyy-mm-dd hh24:mi:ss')
+        </if>
+        <if test="taskParam.formType!=null and taskParam.formType!=''">
+            and UPPER(m.FORM_TYPE) like UPPER('%'||#{taskParam.formType}||'%')
+        </if>
+        ) s
+        where indexNum = 1
+
+        UNION
+
+        select  to_char(s.TASK_DEF_KEY_) as taskDefinitionKey,to_char(s.taskId) as taskId,s.form_type,to_char(s.KEY_) as processDefinitionKey ,to_char(s.PROC_INST_ID_) as instanceId,s.businessId,s.REQUESTER,s.REQUEST_TIME,s.REQUEST_NO,s.SUBJECT
+             ,s.DISPLAY_NUMBER_NAME as  nameAndJobNumber,s.NAME as requesterName  ,s.START_TIME_ as startTime
+        from (select  RES.*,RES.ID_ as taskId,D.KEY_,m.form_type, m.id as businessId,m.REQUESTER,m.REQUEST_TIME,m.REQUEST_NO,m.SUBJECT,e.DISPLAY_NUMBER_NAME,e.NAME,
+        row_number() over (partition by RES.PROC_INST_ID_ ORDER BY RES.START_TIME_ DESC) AS indexNum
+        from ACT_HI_TASKINST RES
+        inner join ACT_HI_IDENTITYLINK HI on HI.TASK_ID_ = RES.ID_
+        inner join ACT_RE_PROCDEF D on RES.PROC_DEF_ID_ = D.ID_
+        inner join ADMINDA1.ADM_BASIC_FORM m on m.INSTANCE_ID=RES.PROC_INST_ID_
+        left join ORGDA1.V_USER_INFO e on m.REQUESTER=e.ID
+        <where>
+            RES.END_TIME_ is not null
+            and RES.ASSIGNEE_ is null
+            and HI.TYPE_ = 'candidate'
+            and (HI.USER_ID_ = #{taskParam.userId})
+            <if test="taskParam.processDefKey!=null and taskParam.processDefKey!=''">
+                and  D.KEY_  IN
+                <foreach collection="ls" item="item" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="taskParam.requesterName!=null and taskParam.requesterName!=''">
+                and UPPER(e.NAME) like UPPER('%'||#{taskParam.requesterName}||'%')
+            </if>
+            <if test="taskParam.subject!=null and taskParam.subject!=''">
+                and UPPER(m.SUBJECT) like UPPER('%'||#{taskParam.subject}||'%')
+            </if>
+            <if test="taskParam.requestNo!=null and taskParam.requestNo!=''">
+                and UPPER(m.REQUEST_NO) like UPPER('%'||#{taskParam.requestNo}||'%')
+            </if>
+            <if test="taskParam.requestTm!=null and taskParam.requestTm!=''">
+                and m.REQUEST_TIME > to_date(to_char(#{taskParam.requestTm},'yyyy-mm-dd')||' 00:00:00','yyyy-mm-dd hh24:mi:ss')
+            </if>
+            <if test="taskParam.requestStartTm!=null and taskParam.requestEndTm!=null">
+                and m.REQUEST_TIME between to_date(to_char(#{taskParam.requestStartTm},'yyyy-mm-dd')||' 00:00:00','yyyy-mm-dd hh24:mi:ss')
+                and to_date(to_char(#{taskParam.requestEndTm},'yyyy-mm-dd')||' 23:59:59','yyyy-mm-dd hh24:mi:ss')
+            </if>
+            <if test="taskParam.formType!=null and taskParam.formType!=''">
+                and UPPER(m.FORM_TYPE) like UPPER('%'||#{taskParam.formType}||'%')
+            </if>
+        </where>
+        ) s where indexNum = 1) U
+
+        ) K where bizIndexNum=1
+
+        order by
+        <choose>
+            <when test="taskParam != null and taskParam.sortParam != null and taskParam.sortParam.size > 0">
+                K.${taskParam.sortParam.field}  ${taskParam.sortParam.method}
+            </when>
+            <otherwise>
+                K.REQUEST_TIME DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="findTaskDone" resultType="com.allinabc.cloud.activiti.pojo.vo.TaskModel">
+    select  s.TASK_DEF_KEY_ as taskDefinitionKey,s.KEY_ as processDefinitionKey ,s.form_type,s.PROC_INST_ID_ as instanceId,s.businessId,s.REQUESTER,s.REQUEST_TIME,s.REQUEST_NO,s.SUBJECT
+         ,s.DISPLAY_NUMBER_NAME as  nameAndJobNumber,s.NAME as requesterName
+    from (select distinct RES.*,D.KEY_, m.id as businessId,m.form_type,m.REQUESTER,m.REQUEST_TIME,m.REQUEST_NO,m.SUBJECT,e.NAME,e.DISPLAY_NUMBER_NAME,
+        row_number() over (partition by RES.PROC_INST_ID_ ORDER BY RES.START_TIME_ DESC) AS indexNum
+        from ACT_HI_TASKINST RES
+          inner join ACT_HI_IDENTITYLINK HI on HI.TASK_ID_ = RES.ID_
+          inner join ACT_RE_PROCDEF D on RES.PROC_DEF_ID_ = D.ID_
+          inner join ADMINDA1.ADM_BASIC_FORM m on m.INSTANCE_ID=RES.PROC_INST_ID_
+          left join ORGDA1.V_USER_INFO e on m.REQUESTER=e.ID
+   <where>
+     RES.END_TIME_ is not null
+     and RES.ASSIGNEE_ is null
+     and HI.TYPE_ = 'candidate'
+     and (HI.USER_ID_ = #{taskParam.userId})
+      <if test="taskParam.processDefKey!=null and taskParam.processDefKey!=''">
+       and  D.KEY_ = #{taskParam.processDefKey}
+      </if>
+   </where>
+   ) s where indexNum = 1
+    ORDER BY
+    <choose>
+        <when test="taskParam != null and taskParam.sortParam != null and taskParam.sortParam.size > 0">
+            s.${taskParam.sortParam.field}  ${taskParam.sortParam.method}
+        </when>
+        <otherwise>
+            s.REQUEST_TIME DESC
+        </otherwise>
+    </choose>
+    </select>
+</mapper>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.allinabc.cloud.notice.mapper.NoticeParticipantMapper">
+<insert id="insertList" useGeneratedKeys="false">
+    insert ALL
+    <foreach collection ="ls" item="item" index= "index">
+        into nte_notice_participant (id, notice_id, participant_type, object_type, object_id, created_by, create_tm, updated_by, update_tm)
+        values
+   (
+    #{item.id}, #{item.noticeId},#{item.participantType},#{item.objectType},#{item.objectId}, #{item.createdBy},#{item.createTm},#{item.updatedBy},#{item.updateTm}
+    )
+    </foreach >
+    SELECT 1 FROM DUAL
+</insert>
+
+    <select id="selectMailByGroupIds" resultType="java.lang.String">
+        select distinct b.EMAIL from ORGDA1.ORG_EMPLOYEE b where b.GROUP_ID IN
+        <foreach collection="ls" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectMailByUserIds" resultType="java.lang.String">
+        SELECT DISTINCT b.EMAIL from ORGDA1.ORG_EMPLOYEE b
+        WHERE b.id IN
+        <foreach collection="ls" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+</mapper>

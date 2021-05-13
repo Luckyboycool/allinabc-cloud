@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.allinabc.cloud.org.mapper.CustomerAccountMapper">
+
+
+    <select id="findPage" resultType="com.allinabc.cloud.org.pojo.vo.CustomerAccountVO">
+        SELECT a.ID,a.USER_NAME as username,d.name as custNames,
+        e.DISPLAY_NUMBER_NAME AS CREATED_BY, a.CREATE_TM FROM ORG_CUSTOMER_ACCOUNT a
+        LEFT JOIN ORGDA1.V_CUSTOMER_INFO d ON a.ID = d.CUSTOMER_ACCOUNT_ID
+        LEFT JOIN ORGDA1.V_USER_INFO e ON e.ID = a.CREATED_BY
+        <where>
+            <if test="username != null and username != ''">
+                (UPPER(a.USER_NAME) like UPPER('%'||#{username}||'%'))
+            </if>
+            <if test="name != null and name != ''">
+                AND (UPPER(d.name)  like UPPER('%'||#{name}||'%'))
+            </if>
+        </where>
+        ORDER BY a.CREATE_TM DESC
+    </select>
+
+    <select id="findChildAndParent" resultType="com.allinabc.cloud.org.pojo.vo.CustomerAccountBasicVO">
+        SELECT ID, USER_NAME
+        FROM ORG_CUSTOMER_ACCOUNT
+                 START WITH ID=#{id}
+        CONNECT BY PRIOR  ID =  CREATED_BY
+        UNION SELECT ID,USER_NAME
+         FROM ORG_CUSTOMER_ACCOUNT
+                  START WITH ID=#{id}
+         CONNECT BY PRIOR  CREATED_BY =  ID
+    </select>
+
+    <select id="findCustomerPage" resultType="com.allinabc.cloud.org.pojo.vo.CustomerAccountVO">
+        SELECT a.ID,a.USER_NAME as username,d.name as custNames,
+        e.DISPLAY_NUMBER_NAME AS CREATED_BY, a.CREATE_TM
+        FROM ORG_CUSTOMER_ACCOUNT a
+        LEFT JOIN ORGDA1.V_CUSTOMER_INFO d ON a.ID = d.CUSTOMER_ACCOUNT_ID
+        LEFT JOIN ORGDA1.V_USER_INFO e ON e.ID = a.CREATED_BY
+        <where>
+            <if test="username != null and username != ''">
+                (UPPER(a.USER_NAME) like UPPER('%'||#{username}||'%'))
+            </if>
+            <if test="name != null and name != ''">
+                AND (UPPER(d.name)  like UPPER('%'||#{name}||'%'))
+            </if>
+            <if test="currentUserId != null and currentUserId != ''">
+                AND (a.CREATED_BY = #{currentUserId} OR a.ID = #{currentUserId})
+            </if>
+        </where>
+        ORDER BY a.CREATE_TM DESC
+    </select>
+
+
+</mapper>

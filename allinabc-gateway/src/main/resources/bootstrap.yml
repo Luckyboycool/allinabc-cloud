@@ -1,0 +1,18 @@
+server:
+  port: ${port:8091}
+spring:
+  application:
+    name: allinabc-gateway
+  profiles:
+    active: dev
+
+
+hystrix:
+  command:
+    default:  #default全局有效，service id指定应用有效
+      execution:
+        timeout:
+          enabled: true
+        isolation:
+          thread:
+            timeoutInMilliseconds: 500000 #断路器超时时间，默认1000ms

@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.allinabc.cloud.admin.mapper.CidbBasicInfoMapper">
+  <resultMap id="BaseResultMap" type="com.allinabc.cloud.admin.pojo.po.CidbBasicInfo">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="CREATED_BY" jdbcType="VARCHAR" property="createdBy" />
+    <result column="CREATE_TM" jdbcType="TIMESTAMP" property="createTm" />
+    <result column="UPDATED_BY" jdbcType="VARCHAR" property="updatedBy" />
+    <result column="UPDATE_TM" jdbcType="TIMESTAMP" property="updateTm" />
+    <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+    <result column="CUST_CODE" jdbcType="VARCHAR" property="custCode" />
+    <result column="CUST_GROUP" jdbcType="VARCHAR" property="custGroup" />
+    <result column="CUST_CODE_ALL" jdbcType="VARCHAR" property="custCodeAll" />
+    <result column="CUST_NAME" jdbcType="VARCHAR" property="custName" />
+    <result column="COMPANY_NAME" jdbcType="VARCHAR" property="companyName" />
+    <result column="COMPANY_ADDRESS" jdbcType="VARCHAR" property="companyAddress" />
+    <result column="SHIPPING_ADDRESS" jdbcType="VARCHAR" property="shippingAddress" />
+    <result column="INVOICE_PARTY" jdbcType="VARCHAR" property="invoiceParty" />
+    <result column="PAYMENT_TERM" jdbcType="VARCHAR" property="paymentTerm" />
+    <result column="DELIVERY_TERM" jdbcType="VARCHAR" property="deliveryTerm" />
+    <result column="CURRENCY" jdbcType="VARCHAR" property="currency" />
+    <result column="TAX_RATE" jdbcType="VARCHAR" property="taxRate" />
+  </resultMap>
+  <resultMap id="BaseMap" type="com.allinabc.cloud.admin.pojo.vo.CidbBasicInfoVo">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="CREATED_BY" jdbcType="VARCHAR" property="createdBy" />
+    <result column="CREATE_TM" jdbcType="TIMESTAMP" property="createTm" />
+    <result column="UPDATED_BY" jdbcType="VARCHAR" property="updatedBy" />
+    <result column="UPDATE_TM" jdbcType="TIMESTAMP" property="updateTm" />
+    <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+    <result column="CUST_CODE" jdbcType="VARCHAR" property="custCode" />
+    <result column="CUST_GROUP" jdbcType="VARCHAR" property="custGroup" />
+    <result column="CUST_CODE_ALL" jdbcType="VARCHAR" property="custCodeAll" />
+    <result column="CUST_NAME" jdbcType="VARCHAR" property="custName" />
+    <result column="COMPANY_NAME" jdbcType="VARCHAR" property="companyName" />
+    <result column="COMPANY_ADDRESS" jdbcType="VARCHAR" property="companyAddress" />
+    <result column="SHIPPING_ADDRESS" jdbcType="VARCHAR" property="shippingAddress" />
+    <result column="INVOICE_PARTY" jdbcType="VARCHAR" property="invoiceParty" />
+    <result column="PAYMENT_TERM" jdbcType="VARCHAR" property="paymentTerm" />
+    <result column="DELIVERY_TERM" jdbcType="VARCHAR" property="deliveryTerm" />
+    <result column="CURRENCY" jdbcType="VARCHAR" property="currency" />
+    <result column="TAX_RATE" jdbcType="VARCHAR" property="taxRate" />
+    <collection property="cidbDetailList" javaType="java.util.ArrayList" column="CUST_CODE" ofType="com.allinabc.cloud.admin.pojo.po.CidbDetail" select="findCidbDetail">
+    </collection>
+  </resultMap>
+  <sql id="Base_List">
+    t1.ID, t1.CREATED_BY, t1.CREATE_TM, t1.UPDATED_BY, t1.UPDATE_TM, t1.REMARK, t1.CUST_CODE, t1.CUST_GROUP,
+    t1.CUST_CODE_ALL, t1.CUST_NAME, t1.COMPANY_NAME, t1.COMPANY_ADDRESS, t1.SHIPPING_ADDRESS, t1.INVOICE_PARTY, t1.
+    PAYMENT_TERM, t1.DELIVERY_TERM, t1.CURRENCY, t1.TAX_RATE,
+    t2.ID AS detail_id, t2.AREA, t2.DEPT, t2.MEMBERS, t2.CUST_CODE
+  </sql>
+  <sql id="Base_Column_List">
+    ID, CREATED_BY, CREATE_TM, UPDATED_BY, UPDATE_TM, REMARK, CUST_CODE, CUST_GROUP, 
+    CUST_CODE_ALL, CUST_NAME, COMPANY_NAME, COMPANY_ADDRESS, SHIPPING_ADDRESS, INVOICE_PARTY,
+    PAYMENT_TERM, DELIVERY_TERM, CURRENCY, TAX_RATE
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ADM_CIDB_INFO
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from ADM_CIDB_INFO
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insertSelective" keyColumn="ID" keyProperty="id" parameterType="com.allinabc.cloud.admin.pojo.po.CidbBasicInfo" useGeneratedKeys="true">
+    insert into ADM_CIDB_INFO
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="createdBy != null">
+        CREATED_BY,
+      </if>
+      <if test="createTm != null">
+        CREATE_TM,
+      </if>
+      <if test="updatedBy != null">
+        UPDATED_BY,
+      </if>
+      <if test="updateTm != null">
+        UPDATE_TM,
+      </if>
+      <if test="remark != null">
+        REMARK,
+      </if>
+      <if test="custCode != null">
+        CUST_CODE,
+      </if>
+      <if test="custGroup != null">
+        CUST_GROUP,
+      </if>
+      <if test="custCodeAll != null">
+        CUST_CODE_ALL,
+      </if>
+      <if test="custName != null">
+        CUST_NAME,
+      </if>
+      <if test="companyName != null">
+        COMPANY_NAME,
+      </if>
+      <if test="companyAddress != null">
+        COMPANY_ADDRESS,
+      </if>
+      <if test="shippingAddress != null">
+        SHIPPING_ADDRESS,
+      </if>
+      <if test="invoiceParty != null">
+        INVOICE_PARTY,
+      </if>
+      <if test="paymentTerm != null">
+        PAYMENT_TERM,
+      </if>
+      <if test="deliveryTerm != null">
+        DELIVERY_TERM,
+      </if>
+      <if test="currency != null">
+        CURRENCY,
+      </if>
+      <if test="taxRate != null">
+        TAX_RATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="createdBy != null">
+        #{createdBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createTm != null">
+        #{createTm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedBy != null">
+        #{updatedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTm != null">
+        #{updateTm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="custCode != null">
+        #{custCode,jdbcType=VARCHAR},
+      </if>
+      <if test="custGroup != null">
+        #{custGroup,jdbcType=VARCHAR},
+      </if>
+      <if test="custCodeAll != null">
+        #{custCodeAll,jdbcType=VARCHAR},
+      </if>
+      <if test="custName != null">
+        #{custName,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null">
+        #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="companyAddress != null">
+        #{companyAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="shippingAddress != null">
+        #{shippingAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="invoiceParty != null">
+        #{invoiceParty,jdbcType=VARCHAR},
+      </if>
+      <if test="paymentTerm != null">
+        #{paymentTerm,jdbcType=VARCHAR},
+      </if>
+      <if test="deliveryTerm != null">
+        #{deliveryTerm,jdbcType=VARCHAR},
+      </if>
+      <if test="currency != null">
+        #{currency,jdbcType=VARCHAR},
+      </if>
+      <if test="taxRate != null">
+        #{taxRate,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.allinabc.cloud.admin.pojo.po.CidbBasicInfo">
+    update ADM_CIDB_INFO
+    <set>
+      <if test="createdBy != null">
+        CREATED_BY = #{createdBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createTm != null">
+        CREATE_TM = #{createTm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedBy != null">
+        UPDATED_BY = #{updatedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTm != null">
+        UPDATE_TM = #{updateTm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null">
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="custCode != null">
+        CUST_CODE = #{custCode,jdbcType=VARCHAR},
+      </if>
+      <if test="custGroup != null">
+        CUST_GROUP = #{custGroup,jdbcType=VARCHAR},
+      </if>
+      <if test="custCodeAll != null">
+        CUST_CODE_ALL = #{custCodeAll,jdbcType=VARCHAR},
+      </if>
+      <if test="custName != null">
+        CUST_NAME = #{custName,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null">
+        COMPANY_NAME = #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="companyAddress != null">
+        COMPANY_ADDRESS = #{companyAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="shippingAddress != null">
+        SHIPPING_ADDRESS = #{shippingAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="invoiceParty != null">
+        INVOICE_PARTY = #{invoiceParty,jdbcType=VARCHAR},
+      </if>
+      <if test="paymentTerm != null">
+        PAYMENT_TERM = #{paymentTerm,jdbcType=VARCHAR},
+      </if>
+      <if test="deliveryTerm != null">
+        DELIVERY_TERM = #{deliveryTerm,jdbcType=VARCHAR},
+      </if>
+      <if test="currency != null">
+        CURRENCY = #{currency,jdbcType=VARCHAR},
+      </if>
+      <if test="taxRate != null">
+        TAX_RATE = #{taxRate,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <select id="findList" resultMap="BaseMap">
+    SELECT
+    <include refid="Base_List"/>
+    FROM ADM_CIDB_INFO t1 LEFT JOIN ADM_CIDB_DETAIL t2 ON t1.CUST_CODE=t2.CUST_CODE
+    <where>
+      <if test="param.custCode != null and param.custCode != ''">
+        UPPER(t1.CUST_CODE) LIKE UPPER(concat(concat('%',#{param.custCode}),'%'))
+      </if>
+      <if test="param.custName != null and param.custName != ''">
+        AND UPPER(t1.CUST_NAME) LIKE UPPER(concat(concat('%',#{param.custName}),'%'))
+      </if>
+      <if test="param.area != null and param.area != ''">
+        AND t2.AREA=#{area}
+      </if>
+    </where>
+  </select>
+
+  <select id="list" resultMap="BaseMap">
+    SELECT
+    t1.*
+    FROM ADM_CIDB_INFO t1
+    WHERE 1=1
+    <if test="param.custCode != null and param.custCode != ''">
+      AND UPPER(t1.CUST_CODE) LIKE UPPER(concat(concat('%',#{param.custCode}),'%'))
+    </if>
+    <if test="param.custName != null and param.custName != ''">
+      AND UPPER(t1.CUST_NAME) LIKE UPPER(concat(concat('%',#{param.custName}),'%'))
+    </if>
+
+  </select>
+
+  <select id="findCidbDetail" resultType="com.allinabc.cloud.admin.pojo.po.CidbDetail">
+    SELECT t2.* FROM ADM_CIDB_DETAIL t2 WHERE t2.CUST_CODE = #{custCode}
+  </select>
+
+</mapper>

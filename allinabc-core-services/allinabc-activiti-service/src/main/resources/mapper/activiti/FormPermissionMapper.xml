@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.allinabc.cloud.activiti.mapper.FormPermissionMapper">
+    <delete id="deleteFabGroupPermission">
+        DELETE FROM ADMINDA1.ADM_FORM_PERMISSION
+        <where>
+            FORM_TYPE=#{formType}  and  BASIC_FORM_ID=#{basicFormId} and BIZ_USER_TYPE=#{bizUserType}
+            <if test="ls!=null and ls.size>0">
+                and BIZ_USER_TYPE_ID NOT IN
+                <foreach collection="ls" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+
+        </where>
+    </delete>
+
+    <select id="selectReadPermisonByBusinessId" resultType="com.allinabc.cloud.activiti.pojo.po.FormPermission">
+     select id, form_type, basic_form_id, biz_user_type, biz_user_type_id, biz_permission, remark, is_available, created_by, create_tm, updated_by, update_tm
+     from ADMINDA1.ADM_FORM_PERMISSION where  BASIC_FORM_ID=#{businessId} and BIZ_USER_TYPE=#{userType} and BIZ_USER_TYPE_ID=#{userId} and FORM_TYPE=#{formType} and IS_AVAILABLE='Y'
+    </select>
+</mapper>

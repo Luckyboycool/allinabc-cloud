@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.allinabc.cloud.admin.mapper.ResourceMapper">
+
+
+    <select id="selectResourcesByUserId" resultType="com.allinabc.cloud.admin.pojo.po.Resource">
+
+        SELECT DISTINCT
+            m.*
+        FROM
+            adm_resource m
+            INNER JOIN adm_role_resource rr ON rr.resource_id = m.id
+            INNER JOIN adm_role_user ur ON ur.role_id = rr.role_id
+            INNER JOIN adm_role sr ON sr.id = ur.ROLE_ID
+        WHERE
+            sr.STATUS = 0
+            AND m.app_code = #{appCode,jdbcType=VARCHAR}
+            AND ur.user_id = #{userId,jdbcType=VARCHAR}
+
+    </select>
+
+    <select id="selectResourcesNormalAll" resultType="com.allinabc.cloud.admin.pojo.po.Resource">
+
+       SELECT
+            *
+       FROM
+         adm_resource m
+       WHERE
+         m.res_type IN ( 'M', 'C' )
+         AND LENGTH( m.res_type )> 0
+         AND m.app_code = #{appCode}
+       ORDER BY
+         m.sort_no
+
+    </select>
+
+    <select id="selectResourcesByRoleId" resultType="com.allinabc.cloud.admin.pojo.po.Resource">
+
+        SELECT DISTINCT
+            m.*
+        FROM
+            adm_resource m
+            INNER JOIN adm_role_resource rr ON rr.resource_id = m.id
+        WHERE
+            m.app_code = #{appCode,jdbcType=VARCHAR}
+            AND rr.role_id = #{userId,jdbcType=VARCHAR}
+
+    </select>
+
+    <select id="listEmpByUid" resultType="com.allinabc.cloud.admin.pojo.po.Resource">
+
+    </select>
+
+    <select id="listResUserByUid" resultType="com.allinabc.cloud.admin.pojo.po.Resource">
+        SELECT DISTINCT ar.id,
+                        ar.parent_id,
+                        ar.res_key,
+                        ar.res_name,
+                        ar.res_type,
+                        ar.component,
+                        ar.path,
+                        ar.perms,
+                        ar.icon,
+                        ar.sort_no,
+                        ar.visible,
+                        ar.target,
+                        ar.redirect,
+                        ar.defaulted
+        FROM ADM_RESOURCE ar
+                 INNER JOIN ADM_ROLE_RESOURCE arr ON ar.ID = arr.RESOURCE_ID
+                 INNER JOIN ADM_ROLE R on arr.ROLE_ID = R.ID
+                 INNER JOIN ADM_ROLE_USER aru on aru.ROLE_ID = R.ID WHERE aru.USER_ID = #{userId}
+    </select>
+
+    <select id="listResDeptById" resultType="com.allinabc.cloud.admin.pojo.po.Resource">
+        SELECT DISTINCT ar.id,
+                        ar.parent_id,
+                        ar.res_key,
+                        ar.res_name,
+                        ar.res_type,
+                        ar.component,
+                        ar.path,
+                        ar.perms,
+                        ar.icon,
+                        ar.sort_no,
+                        ar.visible,
+                        ar.target,
+                        ar.redirect,
+                        ar.defaulted
+        FROM ADM_RESOURCE ar
+                 INNER JOIN ADM_ROLE_RESOURCE arr on ar.ID = arr.RESOURCE_ID
+                 INNER JOIN ADM_ROLE_GROUP arg ON arg.ROLE_ID = arr.ROLE_ID
+                 INNER JOIN ADM_GROUP_DEPT agd ON agd.GROUP_ID = arg.GROUP_ID WHERE agd.DEPT_ID = #{deptId}
+    </select>
+
+    <select id="listResGroupByUserId" resultType="com.allinabc.cloud.admin.pojo.po.Resource">
+        SELECT DISTINCT ar.id,
+                        ar.parent_id,
+                        ar.res_key,
+                        ar.res_name,
+                        ar.res_type,
+                        ar.component,
+                        ar.path,
+                        ar.perms,
+                        ar.icon,
+                        ar.sort_no,
+                        ar.visible,
+                        ar.target,
+                        ar.redirect,
+                        ar.defaulted
+        FROM ADM_RESOURCE ar
+                 INNER JOIN ADM_ROLE_RESOURCE arr on ar.ID = arr.RESOURCE_ID
+                 INNER JOIN ADM_ROLE_GROUP arg ON arg.ROLE_ID = arr.ROLE_ID
+                 INNER JOIN ADM_GROUP_USER agu ON agu.GROUP_ID = arg.GROUP_ID WHERE agu.USER_ID = #{userId}
+    </select>
+
+    <select id="pageBySearch" resultType="com.allinabc.cloud.admin.pojo.po.Resource">
+        SELECT * FROM adm_resource
+        <where>
+            <if test="resKey != null and resKey != ''">
+                UPPER(RES_KEY) like UPPER(concat(#{resKey}, '%'))
+            </if>
+            <if test="resName != null and resName != ''">
+                AND UPPER(RES_NAME) like UPPER(concat(#{resName}, '%'))
+            </if>
+            <if test="path != null and path != '' ">
+                AND UPPER(path) like UPPER(concat(#{path}, '%'))
+            </if>
+        </where>
+    </select>
+
+    <select id="findByRoleIds" resultType="com.allinabc.cloud.admin.pojo.vo.ResourceRoleVO">
+        SELECT b.ID, b.RES_NAME AS name, a.ROLE_ID
+        FROM ADMINDA1.ADM_ROLE_RESOURCE a LEFT JOIN ADMINDA1.ADM_RESOURCE b ON a.RESOURCE_ID = b.ID
+        <where>
+            <if test="roleIds != null and roleIds.size != 0">
+                a.ROLE_ID IN
+                <foreach collection="roleIds" item="roleId" open="(" close=")" separator=",">
+                    #{roleId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="searchGroupAll" resultType="com.allinabc.cloud.admin.pojo.po.Resource">
+        SELECT DISTINCT ar.id,
+                        ar.parent_id,
+                        ar.res_key,
+                        ar.res_name,
+                        ar.res_type,
+                        ar.component,
+                        ar.path,
+                        ar.perms,
+                        ar.icon,
+                        ar.sort_no,
+                        ar.visible,
+                        ar.target,
+                        ar.redirect,
+                        ar.defaulted
+        FROM ADM_RESOURCE ar
+                 INNER JOIN ADM_ROLE_RESOURCE arr on ar.ID = arr.RESOURCE_ID
+                 INNER JOIN ADM_ROLE_GROUP arg ON arg.ROLE_ID = arr.ROLE_ID
+        WHERE arg.GROUP_ID = #{groupAllId}
+    </select>
+
+</mapper>

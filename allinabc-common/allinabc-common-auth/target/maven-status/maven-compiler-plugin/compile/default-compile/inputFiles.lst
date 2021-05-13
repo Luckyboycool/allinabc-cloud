@@ -1,0 +1,4 @@
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-common/allinabc-common-auth/src/main/java/com/allinabc/cloud/common/auth/feign/RemoteResourcesService.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-common/allinabc-common-auth/src/main/java/com/allinabc/cloud/common/auth/annotation/HasPermissions.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-common/allinabc-common-auth/src/main/java/com/allinabc/cloud/common/auth/factory/RemoteResourcesFallbackFactory.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-common/allinabc-common-auth/src/main/java/com/allinabc/cloud/common/auth/annotation/HasFormAuth.java

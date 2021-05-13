@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/processdef">
+  <process id="ifab_device_process" name="device" isExecutable="true">
+    <startEvent id="ifab_device_start" name="ifab_device 流程开始"></startEvent>
+    <userTask id="ifab_device_create" name="创建Device">
+      <extensionElements>
+        <activiti:taskListener event="create" delegateExpression="${deviceTaskListener}"></activiti:taskListener>
+        <activiti:taskListener event="complete" delegateExpression="${deviceTaskListener}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <userTask id="ifab_device_ce_confirm" name="CE Confirm">
+      <extensionElements>
+        <activiti:taskListener event="create" delegateExpression="${deviceTaskListener}"></activiti:taskListener>
+        <activiti:taskListener event="complete" delegateExpression="${deviceTaskListener}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <exclusiveGateway id="ifab_device_ce_confirm_exclusivegateway" name="CE Confirm 审批决策"></exclusiveGateway>
+    <parallelGateway id="ifab_device_ce_confirm_parallegateway_start" name="CE Confirm分支"></parallelGateway>
+    <exclusiveGateway id="ifab_device_ipdf_create_exclusivegateway" name="创建IPDF决策"></exclusiveGateway>
+    <userTask id="ifab_device_pie_confirm_fsr" name="PIE Confire FSR">
+      <extensionElements>
+        <activiti:taskListener event="create" delegateExpression="${deviceTaskListener}"></activiti:taskListener>
+        <activiti:taskListener event="complete" delegateExpression="${deviceTaskListener}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <exclusiveGateway id="ifab_device_pie_confirm_fsr_exclusivegateway" name="PIE Confire FSR审批决策"></exclusiveGateway>
+    <userTask id="ifab_device_ipdf_create" name="创建IPDF">
+      <extensionElements>
+        <activiti:taskListener event="create" delegateExpression="${deviceTaskListener}"></activiti:taskListener>
+        <activiti:taskListener event="complete" delegateExpression="${deviceTaskListener}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <userTask id="ifab_device_ds_confirm_ipdf" name="DS Confirm IPDF">
+      <extensionElements>
+        <activiti:taskListener event="create" delegateExpression="${deviceTaskListener}"></activiti:taskListener>
+        <activiti:taskListener event="complete" delegateExpression="${deviceTaskListener}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <exclusiveGateway id="ifab_device_ds_confirm_ipdf_exclusivegateway" name="DS Confirm IPDF审批决策"></exclusiveGateway>
+    <parallelGateway id="ifab_device_ce_confirm_parallegateway_end" name="CE Confirm 分支合并"></parallelGateway>
+    <serviceTask id="ifap_device_task_service" name="userTaskService" activiti:delegateExpression="${userTaskService}"></serviceTask>
+    <endEvent id="end" name="ifab_device 流程结束"></endEvent>
+    <sequenceFlow id="flow89" sourceRef="ifab_device_ds_confirm_ipdf" targetRef="ifab_device_ds_confirm_ipdf_exclusivegateway"></sequenceFlow>
+    <sequenceFlow id="flow234" sourceRef="ifab_device_ipdf_create" targetRef="ifab_device_ds_confirm_ipdf"></sequenceFlow>
+    <sequenceFlow id="flow5" sourceRef="ifab_device_create" targetRef="ifab_device_ce_confirm"></sequenceFlow>
+    <sequenceFlow id="flow1" name="不创建ipdf" sourceRef="ifab_device_ipdf_create_exclusivegateway" targetRef="ifab_device_ds_confirm_ipdf_exclusivegateway">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ipdfapplyFlag=='N'}]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="ifab_device_update_fsr" name="Update FSR">
+      <extensionElements>
+        <activiti:taskListener event="create" delegateExpression="${deviceTaskListener}"></activiti:taskListener>
+        <activiti:taskListener event="complete" delegateExpression="${deviceTaskListener}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow56" name="创建ipdf" sourceRef="ifab_device_ipdf_create_exclusivegateway" targetRef="ifab_device_ipdf_create">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ipdfapplyFlag=='Y'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow11" sourceRef="ifab_device_pie_confirm_fsr" targetRef="ifab_device_pie_confirm_fsr_exclusivegateway"></sequenceFlow>
+    <sequenceFlow id="flow12" name="同意" sourceRef="ifab_device_pie_confirm_fsr_exclusivegateway" targetRef="ifab_device_ce_confirm_parallegateway_end">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${applyFlag=='Y'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow28" name="同意" sourceRef="ifab_device_ds_confirm_ipdf_exclusivegateway" targetRef="ifab_device_ce_confirm_parallegateway_end">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${applyFlag=='Y'||ipdfapplyFlag=='N'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow2" name="驳回" sourceRef="ifab_device_ds_confirm_ipdf_exclusivegateway" targetRef="ifab_device_ipdf_create">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${applyFlag=='N'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow3" sourceRef="ifab_device_start" targetRef="ifab_device_create"></sequenceFlow>
+    <sequenceFlow id="flow8" name="同意" sourceRef="ifab_device_ce_confirm_exclusivegateway" targetRef="ifab_device_ce_confirm_parallegateway_start">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${applyFlag=='Y'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow9" sourceRef="ifab_device_ce_confirm_parallegateway_start" targetRef="ifab_device_ipdf_create_exclusivegateway"></sequenceFlow>
+    <sequenceFlow id="flow14" sourceRef="ifab_device_ce_confirm_parallegateway_end" targetRef="ifap_device_task_service"></sequenceFlow>
+    <sequenceFlow id="flow15" sourceRef="ifap_device_task_service" targetRef="end"></sequenceFlow>
+    <sequenceFlow id="flow29" name="驳回" sourceRef="ifab_device_pie_confirm_fsr_exclusivegateway" targetRef="ifab_device_update_fsr">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${applyFlag=='N'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow30" name="同意" sourceRef="ifab_device_update_fsr" targetRef="ifab_device_pie_confirm_fsr">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${applyFlag=='Y'}]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="ifab_device_return_update" name="退回后修改">
+      <extensionElements>
+        <activiti:taskListener event="create" delegateExpression="${deviceTaskListener}"></activiti:taskListener>
+        <activiti:taskListener event="complete" delegateExpression="${deviceTaskListener}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow7" sourceRef="ifab_device_ce_confirm" targetRef="ifab_device_ce_confirm_exclusivegateway"></sequenceFlow>
+    <sequenceFlow id="flow10" sourceRef="ifab_device_ce_confirm_parallegateway_start" targetRef="ifab_device_pie_confirm_fsr"></sequenceFlow>
+    <sequenceFlow id="flow100" sourceRef="ifab_device_return_update" targetRef="ifab_device_ce_confirm"></sequenceFlow>
+    <sequenceFlow id="flow4" name="驳回" sourceRef="ifab_device_ce_confirm_exclusivegateway" targetRef="ifab_device_return_update">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${applyFlag=='N'}]]></conditionExpression>
+    </sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_ifab_device_process">
+    <bpmndi:BPMNPlane bpmnElement="ifab_device_process" id="BPMNPlane_ifab_device_process">
+      <bpmndi:BPMNShape bpmnElement="ifab_device_start" id="BPMNShape_ifab_device_start">
+        <omgdc:Bounds height="30.0" width="30.0" x="445.0" y="45.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_device_create" id="BPMNShape_ifab_device_create">
+        <omgdc:Bounds height="80.0" width="100.0" x="409.0909002241026" y="109.09090672642736"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_device_ce_confirm" id="BPMNShape_ifab_device_ce_confirm">
+        <omgdc:Bounds height="80.0" width="100.0" x="409.0909002241026" y="231.81817679365815"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_device_ce_confirm_exclusivegateway" id="BPMNShape_ifab_device_ce_confirm_exclusivegateway">
+        <omgdc:Bounds height="40.0" width="40.0" x="440.0" y="360.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_device_ce_confirm_parallegateway_start" id="BPMNShape_ifab_device_ce_confirm_parallegateway_start">
+        <omgdc:Bounds height="40.0" width="40.0" x="440.0" y="450.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_device_ipdf_create_exclusivegateway" id="BPMNShape_ifab_device_ipdf_create_exclusivegateway">
+        <omgdc:Bounds height="40.0" width="40.0" x="310.0" y="540.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_device_pie_confirm_fsr" id="BPMNShape_ifab_device_pie_confirm_fsr">
+        <omgdc:Bounds height="80.0" width="100.0" x="595.0" y="525.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_device_pie_confirm_fsr_exclusivegateway" id="BPMNShape_ifab_device_pie_confirm_fsr_exclusivegateway">
+        <omgdc:Bounds height="40.0" width="40.0" x="625.0" y="733.8538419264028"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_device_ipdf_create" id="BPMNShape_ifab_device_ipdf_create">
+        <omgdc:Bounds height="80.0" width="100.0" x="280.0" y="645.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_device_ds_confirm_ipdf" id="BPMNShape_ifab_device_ds_confirm_ipdf">
+        <omgdc:Bounds height="80.0" width="100.0" x="280.0" y="780.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_device_ds_confirm_ipdf_exclusivegateway" id="BPMNShape_ifab_device_ds_confirm_ipdf_exclusivegateway">
+        <omgdc:Bounds height="40.0" width="40.0" x="310.0" y="915.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_device_ce_confirm_parallegateway_end" id="BPMNShape_ifab_device_ce_confirm_parallegateway_end">
+        <omgdc:Bounds height="40.0" width="40.0" x="440.0" y="990.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifap_device_task_service" id="BPMNShape_ifap_device_task_service">
+        <omgdc:Bounds height="80.0" width="100.0" x="410.0" y="1080.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="end" id="BPMNShape_end">
+        <omgdc:Bounds height="28.0" width="28.0" x="446.0" y="1215.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_device_update_fsr" id="BPMNShape_ifab_device_update_fsr">
+        <omgdc:Bounds height="80.0" width="100.0" x="915.0" y="525.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_device_return_update" id="BPMNShape_ifab_device_return_update">
+        <omgdc:Bounds height="80.0" width="100.0" x="149.99999674883762" y="163.63636008964104"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow28" id="BPMNEdge_flow28">
+        <omgdi:waypoint x="330.0" y="955.0"></omgdi:waypoint>
+        <omgdi:waypoint x="330.0" y="1010.0"></omgdi:waypoint>
+        <omgdi:waypoint x="440.0" y="1010.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow29" id="BPMNEdge_flow29">
+        <omgdi:waypoint x="664.9908692907966" y="753.8629726356062"></omgdi:waypoint>
+        <omgdi:waypoint x="965.0" y="754.0"></omgdi:waypoint>
+        <omgdi:waypoint x="965.0" y="605.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow14" id="BPMNEdge_flow14">
+        <omgdi:waypoint x="460.0" y="1030.0"></omgdi:waypoint>
+        <omgdi:waypoint x="460.0" y="1080.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow15" id="BPMNEdge_flow15">
+        <omgdi:waypoint x="460.0" y="1160.0"></omgdi:waypoint>
+        <omgdi:waypoint x="460.0" y="1215.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="310.0" y="560.0"></omgdi:waypoint>
+        <omgdi:waypoint x="179.0" y="560.0"></omgdi:waypoint>
+        <omgdi:waypoint x="179.0" y="935.0"></omgdi:waypoint>
+        <omgdi:waypoint x="310.0" y="935.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="350.0" y="935.0"></omgdi:waypoint>
+        <omgdi:waypoint x="464.0" y="935.0"></omgdi:waypoint>
+        <omgdi:waypoint x="464.0" y="685.0"></omgdi:waypoint>
+        <omgdi:waypoint x="380.0" y="685.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="459.84694524679725" y="74.99921912109167"></omgdi:waypoint>
+        <omgdi:waypoint x="459.4990674812567" y="109.09090672642736"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="440.0" y="380.0"></omgdi:waypoint>
+        <omgdi:waypoint x="199.99999674883762" y="380.0"></omgdi:waypoint>
+        <omgdi:waypoint x="199.99999674883762" y="243.63636008964104"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="459.0909002241026" y="189.09090672642736"></omgdi:waypoint>
+        <omgdi:waypoint x="459.0909002241026" y="231.81817679365815"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
+        <omgdi:waypoint x="459.4270379407552" y="311.81817679365815"></omgdi:waypoint>
+        <omgdi:waypoint x="459.8333317289752" y="360.1666682710248"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow10" id="BPMNEdge_flow10">
+        <omgdi:waypoint x="480.0" y="470.0"></omgdi:waypoint>
+        <omgdi:waypoint x="645.0" y="470.0"></omgdi:waypoint>
+        <omgdi:waypoint x="645.0" y="525.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow100" id="BPMNEdge_flow100">
+        <omgdi:waypoint x="249.99999674883762" y="203.63636008964107"></omgdi:waypoint>
+        <omgdi:waypoint x="334.0908866401546" y="203.63636008964107"></omgdi:waypoint>
+        <omgdi:waypoint x="334.0908866401546" y="271.81817679365815"></omgdi:waypoint>
+        <omgdi:waypoint x="409.0909002241026" y="271.81817679365815"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow11" id="BPMNEdge_flow11">
+        <omgdi:waypoint x="645.0" y="605.0"></omgdi:waypoint>
+        <omgdi:waypoint x="645.0" y="733.8538419264028"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow8" id="BPMNEdge_flow8">
+        <omgdi:waypoint x="460.0" y="400.0"></omgdi:waypoint>
+        <omgdi:waypoint x="460.0" y="450.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow89" id="BPMNEdge_flow89">
+        <omgdi:waypoint x="330.0" y="860.0"></omgdi:waypoint>
+        <omgdi:waypoint x="330.0" y="915.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow56" id="BPMNEdge_flow56">
+        <omgdi:waypoint x="330.0" y="580.0"></omgdi:waypoint>
+        <omgdi:waypoint x="330.0" y="645.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow12" id="BPMNEdge_flow12">
+        <omgdi:waypoint x="645.0" y="773.8538419264028"></omgdi:waypoint>
+        <omgdi:waypoint x="645.0" y="1010.0"></omgdi:waypoint>
+        <omgdi:waypoint x="480.0" y="1010.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow9" id="BPMNEdge_flow9">
+        <omgdi:waypoint x="440.0" y="470.0"></omgdi:waypoint>
+        <omgdi:waypoint x="330.0" y="470.0"></omgdi:waypoint>
+        <omgdi:waypoint x="330.0" y="540.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow234" id="BPMNEdge_flow234">
+        <omgdi:waypoint x="330.0" y="725.0"></omgdi:waypoint>
+        <omgdi:waypoint x="330.0" y="780.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow30" id="BPMNEdge_flow30">
+        <omgdi:waypoint x="915.0" y="565.0"></omgdi:waypoint>
+        <omgdi:waypoint x="695.0" y="565.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

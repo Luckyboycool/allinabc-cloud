@@ -1,0 +1,14 @@
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-pojos/allinabc-notice-pojo/src/main/java/com/allinabc/cloud/notice/pojo/po/NoticeCode.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-pojos/allinabc-notice-pojo/src/main/java/com/allinabc/cloud/notice/pojo/dto/QueryNoticeTemplateDTO.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-pojos/allinabc-notice-pojo/src/main/java/com/allinabc/cloud/notice/pojo/dto/Attachment.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-pojos/allinabc-notice-pojo/src/main/java/com/allinabc/cloud/notice/pojo/dto/NoticeInfoModel.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-pojos/allinabc-notice-pojo/src/main/java/com/allinabc/cloud/notice/pojo/dto/NoticeParticipantModel.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-pojos/allinabc-notice-pojo/src/main/java/com/allinabc/cloud/notice/pojo/dto/MailRequest.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-pojos/allinabc-notice-pojo/src/main/java/com/allinabc/cloud/notice/pojo/dto/SendTypeModel.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-pojos/allinabc-notice-pojo/src/main/java/com/allinabc/cloud/notice/pojo/vo/NoticeTemplateVO.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-pojos/allinabc-notice-pojo/src/main/java/com/allinabc/cloud/notice/pojo/constant/NoticeConstant.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-pojos/allinabc-notice-pojo/src/main/java/com/allinabc/cloud/notice/pojo/dto/NoticeParticipantDTO.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-pojos/allinabc-notice-pojo/src/main/java/com/allinabc/cloud/notice/pojo/po/NoticeInfo.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-pojos/allinabc-notice-pojo/src/main/java/com/allinabc/cloud/notice/pojo/po/NoticeParticipant.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-pojos/allinabc-notice-pojo/src/main/java/com/allinabc/cloud/notice/pojo/po/NoticeTemplate.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-pojos/allinabc-notice-pojo/src/main/java/com/allinabc/cloud/notice/pojo/dto/ModifyNoticeTemplateDTO.java

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/processdef">
+  <process id="ifab_toptier_process" name="toptier" isExecutable="true">
+    <startEvent id="ifab_toptier_start" name="toptier开始"></startEvent>
+    <userTask id="ifab_toptier_create" name="申请创建">
+      <extensionElements>
+        <activiti:taskListener event="create" delegateExpression="${toptierTaskListener}"></activiti:taskListener>
+        <activiti:taskListener event="complete" delegateExpression="${toptierTaskListener}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="sid-0C24BC92-954B-4702-8B62-4547D76F7E4B" sourceRef="ifab_toptier_start" targetRef="ifab_toptier_create"></sequenceFlow>
+    <userTask id="ifab_toptier_apply_leader" name="申请人上级主管签核">
+      <extensionElements>
+        <activiti:taskListener event="complete" delegateExpression="${toptierTaskListener}"></activiti:taskListener>
+        <activiti:taskListener event="create" delegateExpression="${toptierTaskListener}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <exclusiveGateway id="ifab_toptier_apply_leader_exclusive_gateway" name="申请人上级主管签核网关"></exclusiveGateway>
+    <userTask id="ifab_toptier_mask" name="Mask Confirm">
+      <extensionElements>
+        <activiti:taskListener event="create" delegateExpression="${toptierTaskListener}"></activiti:taskListener>
+        <activiti:taskListener event="complete" delegateExpression="${toptierTaskListener}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <exclusiveGateway id="ifab_toptier_mask_exclusive_gateway" name="Mask签核网关"></exclusiveGateway>
+    <userTask id="ifab_toptier_mask_leader" name="Mask上级确认">
+      <extensionElements>
+        <activiti:taskListener event="create" delegateExpression="${toptierTaskListener}"></activiti:taskListener>
+        <activiti:taskListener event="complete" delegateExpression="${toptierTaskListener}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <exclusiveGateway id="ifab_toptier_mask_leader_exclusive_gateway" name="Mask上级签核网关"></exclusiveGateway>
+    <sequenceFlow id="sid-8F2B0A5F-E618-46A9-8DC1-38A03E465603" sourceRef="ifab_toptier_mask_leader" targetRef="ifab_toptier_mask_leader_exclusive_gateway"></sequenceFlow>
+    <serviceTask id="ifab_toptier_service_task" name="serviceTask" activiti:delegateExpression="${userTaskService}"></serviceTask>
+    <endEvent id="end" name="toptier结束"></endEvent>
+    <sequenceFlow id="sid-664370DF-E97C-4112-A765-A667416FA2B1" sourceRef="ifab_toptier_service_task" targetRef="end"></sequenceFlow>
+    <sequenceFlow id="ifab_toptier_apply_leader_reject" name="驳回" sourceRef="ifab_toptier_apply_leader_exclusive_gateway" targetRef="ifab_toptier_back_update">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${applyFlag=='N'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="ifab_mask_leader_approve" name="核可" sourceRef="ifab_toptier_apply_leader_exclusive_gateway" targetRef="ifab_toptier_mask">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${applyFlag=='Y'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="ifab_toptier_mask_1" sourceRef="ifab_toptier_mask" targetRef="ifab_toptier_mask_exclusive_gateway"></sequenceFlow>
+    <sequenceFlow id="ifab_toptier_apply_leader_1" sourceRef="ifab_toptier_apply_leader" targetRef="ifab_toptier_apply_leader_exclusive_gateway"></sequenceFlow>
+    <sequenceFlow id="ifab_toptier_apply_1" sourceRef="ifab_toptier_create" targetRef="ifab_toptier_apply_leader"></sequenceFlow>
+    <sequenceFlow id="ifab_toptier_mask_leader_approve" name="核可" sourceRef="ifab_toptier_mask_leader_exclusive_gateway" targetRef="ifab_toptier_service_task">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${applyFlag=='Y'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="ifab_toptier_mask_approve" name="核可" sourceRef="ifab_toptier_mask_exclusive_gateway" targetRef="ifab_toptier_mask_leader">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${applyFlag=='Y'}]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="ifab_toptier_back_update" name="退回后修改">
+      <extensionElements>
+        <activiti:taskListener event="create" delegateExpression="${toptierTaskListener}"></activiti:taskListener>
+        <activiti:taskListener event="complete" delegateExpression="${toptierTaskListener}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="ifab_toptier_mask_leader_reject" name="驳回" sourceRef="ifab_toptier_mask_leader_exclusive_gateway" targetRef="ifab_toptier_back_update">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${applyFlag=='N'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="ifab_toptier_renew" name="重新提交" sourceRef="ifab_toptier_back_update" targetRef="ifab_toptier_apply_leader">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${applyFlag=='Y'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="ifab_toptier_mask_reject" name="驳回" sourceRef="ifab_toptier_mask_exclusive_gateway" targetRef="ifab_toptier_back_update">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${applyFlag=='N'}]]></conditionExpression>
+    </sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_ifab_toptier_process">
+    <bpmndi:BPMNPlane bpmnElement="ifab_toptier_process" id="BPMNPlane_ifab_toptier_process">
+      <bpmndi:BPMNShape bpmnElement="ifab_toptier_start" id="BPMNShape_ifab_toptier_start">
+        <omgdc:Bounds height="30.0" width="30.0" x="150.0" y="15.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_toptier_create" id="BPMNShape_ifab_toptier_create">
+        <omgdc:Bounds height="80.0" width="100.0" x="115.0" y="90.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_toptier_apply_leader" id="BPMNShape_ifab_toptier_apply_leader">
+        <omgdc:Bounds height="80.0" width="100.0" x="115.0" y="210.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_toptier_apply_leader_exclusive_gateway" id="BPMNShape_ifab_toptier_apply_leader_exclusive_gateway">
+        <omgdc:Bounds height="40.0" width="40.0" x="145.0" y="330.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_toptier_mask" id="BPMNShape_ifab_toptier_mask">
+        <omgdc:Bounds height="80.0" width="100.0" x="115.0" y="420.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_toptier_mask_exclusive_gateway" id="BPMNShape_ifab_toptier_mask_exclusive_gateway">
+        <omgdc:Bounds height="40.0" width="40.0" x="145.0" y="540.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_toptier_mask_leader" id="BPMNShape_ifab_toptier_mask_leader">
+        <omgdc:Bounds height="80.0" width="100.0" x="115.0" y="630.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_toptier_mask_leader_exclusive_gateway" id="BPMNShape_ifab_toptier_mask_leader_exclusive_gateway">
+        <omgdc:Bounds height="40.0" width="40.0" x="145.0" y="765.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_toptier_service_task" id="BPMNShape_ifab_toptier_service_task">
+        <omgdc:Bounds height="80.0" width="100.0" x="115.0" y="870.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="end" id="BPMNShape_end">
+        <omgdc:Bounds height="28.0" width="28.0" x="151.0" y="1021.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_toptier_back_update" id="BPMNShape_ifab_toptier_back_update">
+        <omgdc:Bounds height="80.0" width="100.0" x="345.0" y="210.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="ifab_toptier_mask_leader_reject" id="BPMNEdge_ifab_toptier_mask_leader_reject">
+        <omgdi:waypoint x="185.0" y="785.0"></omgdi:waypoint>
+        <omgdi:waypoint x="395.0" y="785.0"></omgdi:waypoint>
+        <omgdi:waypoint x="395.0" y="290.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="ifab_toptier_mask_approve" id="BPMNEdge_ifab_toptier_mask_approve">
+        <omgdi:waypoint x="165.0" y="580.0"></omgdi:waypoint>
+        <omgdi:waypoint x="165.0" y="630.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="ifab_toptier_mask_1" id="BPMNEdge_ifab_toptier_mask_1">
+        <omgdi:waypoint x="165.0" y="500.0"></omgdi:waypoint>
+        <omgdi:waypoint x="165.0" y="540.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="ifab_mask_leader_approve" id="BPMNEdge_ifab_mask_leader_approve">
+        <omgdi:waypoint x="165.0" y="370.0"></omgdi:waypoint>
+        <omgdi:waypoint x="165.0" y="420.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="ifab_toptier_apply_leader_1" id="BPMNEdge_ifab_toptier_apply_leader_1">
+        <omgdi:waypoint x="165.0" y="290.0"></omgdi:waypoint>
+        <omgdi:waypoint x="165.0" y="330.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="ifab_toptier_mask_reject" id="BPMNEdge_ifab_toptier_mask_reject">
+        <omgdi:waypoint x="185.0" y="560.0"></omgdi:waypoint>
+        <omgdi:waypoint x="395.0" y="560.0"></omgdi:waypoint>
+        <omgdi:waypoint x="395.0" y="290.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-664370DF-E97C-4112-A765-A667416FA2B1" id="BPMNEdge_sid-664370DF-E97C-4112-A765-A667416FA2B1">
+        <omgdi:waypoint x="165.0" y="950.0"></omgdi:waypoint>
+        <omgdi:waypoint x="165.0" y="1021.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="ifab_toptier_apply_1" id="BPMNEdge_ifab_toptier_apply_1">
+        <omgdi:waypoint x="165.0" y="170.0"></omgdi:waypoint>
+        <omgdi:waypoint x="165.0" y="210.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="ifab_toptier_renew" id="BPMNEdge_ifab_toptier_renew">
+        <omgdi:waypoint x="345.0" y="250.0"></omgdi:waypoint>
+        <omgdi:waypoint x="215.0" y="250.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="ifab_toptier_mask_leader_approve" id="BPMNEdge_ifab_toptier_mask_leader_approve">
+        <omgdi:waypoint x="165.0" y="805.0"></omgdi:waypoint>
+        <omgdi:waypoint x="165.0" y="870.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="ifab_toptier_apply_leader_reject" id="BPMNEdge_ifab_toptier_apply_leader_reject">
+        <omgdi:waypoint x="185.0" y="350.0"></omgdi:waypoint>
+        <omgdi:waypoint x="395.0" y="350.0"></omgdi:waypoint>
+        <omgdi:waypoint x="395.0" y="290.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-0C24BC92-954B-4702-8B62-4547D76F7E4B" id="BPMNEdge_sid-0C24BC92-954B-4702-8B62-4547D76F7E4B">
+        <omgdi:waypoint x="165.0" y="45.0"></omgdi:waypoint>
+        <omgdi:waypoint x="165.0" y="90.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-8F2B0A5F-E618-46A9-8DC1-38A03E465603" id="BPMNEdge_sid-8F2B0A5F-E618-46A9-8DC1-38A03E465603">
+        <omgdi:waypoint x="165.0" y="710.0"></omgdi:waypoint>
+        <omgdi:waypoint x="165.0" y="765.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

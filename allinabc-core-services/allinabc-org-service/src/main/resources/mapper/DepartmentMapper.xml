@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.allinabc.cloud.org.mapper.DepartmentMapper">
+
+    <select id="findListByPid" resultType="com.allinabc.cloud.org.pojo.vo.DepartmentTreeVO">
+        SELECT ID as departId, NAME as departName, DEPT_LEVEL as departLevel, PID as parentId
+            FROM ORG_DEPARTMENT
+            WHERE PID = #{id}
+              AND (CANCELED IS NULL  OR CANCELED = '')
+    </select>
+
+    <select id="findList" resultType="com.allinabc.cloud.org.pojo.po.Department">
+        SELECT ID, NAME, DEPT_LEVEL, PID FROM ORG_DEPARTMENT
+            WHERE  (CANCELED IS NULL  OR CANCELED = '')
+    </select>
+
+    <select id="findListByName" resultType="com.allinabc.cloud.org.pojo.po.Department">
+        SELECT ID, NAME, DEPT_LEVEL, PID FROM ORG_DEPARTMENT
+        <where>
+            <if test="name != null and name != ''">
+                UPPER(NAME) LIKE UPPER(CONCAT('%',CONCAT(#{name}, '%'))) AND
+            </if>
+            (CANCELED IS NULL  OR CANCELED = '')
+        </where>
+    </select>
+
+    <select id="selectChild" resultType="java.lang.String">
+        SELECT ID
+        FROM ORG_DEPARTMENT
+                 START WITH ID= #{id}
+        CONNECT BY PRIOR  ID =  PID
+    </select>
+
+
+</mapper>

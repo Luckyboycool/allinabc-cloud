@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.allinabc.cloud.admin.mapper.GroupMapper">
+
+    <resultMap id="BaseResultMap" type="com.allinabc.cloud.admin.pojo.po.Group" >
+        <id column="ID" property="id" jdbcType="VARCHAR" />
+        <result column="APP_CODE" property="appCode" jdbcType="VARCHAR" />
+        <result column="GROUP_NAME" property="groupName" jdbcType="VARCHAR" />
+        <result column="TYPE" property="type" jdbcType="VARCHAR" />
+        <result column="IS_AVAILABLE" property="isAvailable" jdbcType="VARCHAR" />
+        <result column="IS_HIDDEN" property="isHidden" jdbcType="VARCHAR" />
+        <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+        <result column="CREATED_BY" property="createdBy" jdbcType="VARCHAR" />
+        <result column="CREATE_TM" property="createTm" jdbcType="TIMESTAMP" />
+        <result column="UPDATED_BY" property="updatedBy" jdbcType="VARCHAR" />
+        <result column="UPDATE_TM" property="updateTm" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+
+    <resultMap id="GroupUserResultMap" type="com.allinabc.cloud.admin.pojo.po.Group" >
+        <id column="ID" property="id" jdbcType="VARCHAR" />
+        <result column="APP_CODE" property="appCode" jdbcType="VARCHAR" />
+        <result column="GROUP_NAME" property="groupName" jdbcType="VARCHAR" />
+        <result column="TYPE" property="type" jdbcType="VARCHAR" />
+        <result column="IS_AVAILABLE" property="isAvailable" jdbcType="VARCHAR" />
+        <result column="IS_HIDDEN" property="isHidden" jdbcType="VARCHAR" />
+        <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+        <result column="CREATED_BY" property="createdBy" jdbcType="VARCHAR" />
+        <result column="CREATE_TM" property="createTm" jdbcType="TIMESTAMP" />
+        <result column="UPDATED_BY" property="updatedBy" jdbcType="VARCHAR" />
+        <result column="UPDATE_TM" property="updateTm" jdbcType="TIMESTAMP" />
+        <collection property="members" ofType="com.allinabc.cloud.admin.pojo.po.SysUser">
+            <id column="ID" property="id" jdbcType="VARCHAR" />
+            <result column="USER_NO" property="userNo" jdbcType="VARCHAR" />
+            <result column="USER_TYPE" property="userType" jdbcType="VARCHAR" />
+            <result column="NICK_NAME" property="nickName" jdbcType="VARCHAR" />
+            <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+            <result column="PASSWORD" property="password" jdbcType="VARCHAR" />
+            <result column="SALT" property="salt" jdbcType="VARCHAR" />
+            <result column="AVATAR" property="avatar" jdbcType="VARCHAR" />
+            <result column="EMAIL" property="email" jdbcType="VARCHAR" />
+            <result column="PHONE" property="phone" jdbcType="VARCHAR" />
+            <result column="SEX" property="sex" jdbcType="VARCHAR" />
+            <result column="STATUS" property="status" jdbcType="VARCHAR" />
+            <result column="IS_AVAILABLE" property="isAvailable" jdbcType="VARCHAR" />
+            <result column="LAST_LOGIN_IP" property="lastLoginIp" jdbcType="VARCHAR" />
+            <result column="LAST_LOGIN_TIME" property="lastLoginTime" jdbcType="TIMESTAMP" />
+        </collection>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        ID, APP_CODE, GROUP_NAME, TYPE, IS_AVAILABLE, IS_HIDDEN, REMARK, CREATED_BY, CREATE_TM,
+        UPDATED_BY, UPDATE_TM
+    </sql>
+
+    <select id="selectGroupInfoByUserId" resultMap="GroupUserResultMap">
+     SELECT a.ID,
+       a.APP_CODE,
+       a.GROUP_NAME,
+       a.IS_AVAILABLE,
+       a.IS_HIDDEN,
+       b.id, b.user_type, b.nick_name, b.user_name, b.password, b.salt, b.avatar, b.email, b.phone, b.sex, b.status, b.is_available, b.last_login_ip, b.last_login_time
+     FROM ADM_GROUP a,ADM_GROUP_USER c,ADM_USER b where a.ID = c.GROUP_ID and c.USER_ID=b.id and b.id=#{userId,jdbcType=VARCHAR}
+    </select>
+
+    <select id="countByUser" resultType="java.lang.Long">
+     SELECT COUNT(1) FROM ADM_GROUP_USER WHERE USER_ID = {userId,jdbcType=VARCHAR}
+    </select>
+
+
+    <select id="findPage" resultType="com.allinabc.cloud.admin.pojo.vo.GroupListVO" parameterType="com.allinabc.cloud.admin.pojo.dto.GroupSearchDTO">
+        SELECT a.ID, a.GROUP_NAME, a.IS_AVAILABLE, a.DESCRIPTION, b.username as usernames, d.deptName as depts
+        FROM ADMINDA1.ADM_GROUP a
+        LEFT JOIN
+            (SELECT c.GROUP_ID, (LISTAGG((c.NAME || '(' || c.JOB_NUMBER||')'),',') within group ( order by c.GROUP_ID)) AS username
+            FROM (SELECT a.GROUP_ID,b.NAME,b.JOB_NUMBER FROM ADM_GROUP_USER a INNER JOIN ORGDA1.ORG_EMPLOYEE b ON a.USER_ID = b.ID) c
+            GROUP BY c.GROUP_ID) b
+            ON a.ID = b.GROUP_ID
+        LEFT JOIN
+            (SELECT c.GROUP_ID, (LISTAGG(c.NAME,',') within group ( order by c.GROUP_ID)) AS deptName
+            FROM (SELECT a.GROUP_ID,b.NAME FROM ADM_GROUP_DEPT a INNER JOIN ORGDA1.ORG_DEPARTMENT b ON a.DEPT_ID = b.ID) c
+            GROUP BY c.GROUP_ID) d
+            ON a.ID = d.GROUP_ID
+        <where>
+            <if test="searchDTO != null">
+                <if test="searchDTO.groupName != null and searchDTO.groupName != ''">
+                    UPPER(a.GROUP_NAME) like UPPER('%'||#{searchDTO.groupName}|| '%')
+                </if>
+                <if test="searchDTO.description != null and searchDTO.description != ''">
+                    AND UPPER(a.DESCRIPTION) like UPPER('%'||#{searchDTO.description}|| '%')
+                </if>
+                <if test="searchDTO.isAvailable != null and searchDTO.isAvailable != ''">
+                    AND UPPER(a.IS_AVAILABLE) like UPPER('%'||#{searchDTO.isAvailable}|| '%')
+                </if>
+                <if test="searchDTO.username != null and searchDTO.username != ''">
+                    AND UPPER(b.username) like UPPER('%'||#{searchDTO.username}|| '%')
+                </if>
+                <if test="searchDTO.deptName != null and searchDTO.deptName != ''">
+                    AND UPPER(d.deptName) like UPPER('%'||#{searchDTO.deptName}|| '%')
+                </if>
+            </if>
+        </where>
+        ORDER BY a.CREATE_TM DESC
+    </select>
+</mapper>

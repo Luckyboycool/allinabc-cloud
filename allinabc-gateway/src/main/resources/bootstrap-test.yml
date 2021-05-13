@@ -1,0 +1,113 @@
+server:
+  port: ${port:8091}
+spring:
+  profiles:
+    active: test
+  application:
+    name: allinabc-gateway
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    nacos:
+      config:
+        server-addr: ${NACOS_ADDR:127.0.0.1}:${NACOS_PORT:8848}
+        file-extension: yml
+        group: WEB_BACKEND
+        namespace: ${NACOS_NAMESPACE:20002}
+        extension-configs[0]:
+          data-id: allinabc-common.yml
+        refreshEnabled: false
+      discovery:
+        server-addr: ${NACOS_ADDR:127.0.0.1}:${NACOS_PORT:8848}
+        group: WEB_BACKEND
+        namespace: ${NACOS_NAMESPACE:20002}
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          # 使用小写的Service ID
+          lower-case-service-id: true
+      routes:
+        - id: allinabc-auth
+          uri: lb://allinabc-auth
+          predicates:
+            - Path=/auth/**
+          filters:
+            - StripPrefix=1
+        # portal
+        - id: allinabc-portal
+          uri: lb://allinabc-portal
+          predicates:
+            - Path=/portal/**
+          filters:
+            - StripPrefix=1
+        # org
+        - id: allinabc-org
+          uri: lb://allinabc-org
+          predicates:
+            - Path=/org/**
+          filters:
+            - StripPrefix=1
+        # notice
+        - id: allinabc-notice
+          uri: lb://allinabc-notice
+          predicates:
+            - Path=/notice/**
+          filters:
+            - StripPrefix=1
+        # attach
+        - id: allinabc-attach
+          uri: lb://allinabc-attach
+          predicates:
+            - Path=/attach/**
+          filters:
+            - StripPrefix=1
+        # activiti
+        - id: allinabc-activiti
+          uri: lb://allinabc-activiti
+          predicates:
+            - Path=/activiti/**
+          filters:
+            - StripPrefix=1
+        # gta-tapeout
+        - id: gta-tapeout
+          uri: lb://gta-tapeout
+          predicates:
+            - Path=/tapeout/**
+          filters:
+            - StripPrefix=1
+        # admin
+        - id: allinabc-admin
+          uri: lb://allinabc-admin
+          predicates:
+            - Path=/admin/**
+          filters:
+            # 限流配置
+            - StripPrefix=1
+            - name: RequestRateLimiter
+              args:
+                key-resolver: '#{@remoteAddrKeyResolver}'
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+              # 降级配置
+            - name: Hystrix
+              args:
+                name: fallbackcmd
+                fallbackUri: 'forward:/fallback'
+
+
+hystrix:
+  command:
+    default:  #default全局有效，service id指定应用有效
+      execution:
+        timeout:
+          enabled: true
+        isolation:
+          thread:
+            timeoutInMilliseconds: 500000 #断路器超时时间，默认1000ms
+
+logging:
+  file:
+    path: /Users/kismet/DevTools/99_Logs/jems
+  level:
+    com.alibaba.nacos.client.naming: error

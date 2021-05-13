@@ -1,0 +1,10 @@
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-common/allinabc-common-web/src/main/java/com/allinabc/cloud/common/web/enums/ApiResultCode.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-common/allinabc-common-web/src/main/java/com/allinabc/cloud/common/web/pojo/param/PropertyFilter.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-common/allinabc-common-web/src/main/java/com/allinabc/cloud/common/web/pojo/resp/Page.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-common/allinabc-common-web/src/main/java/com/allinabc/cloud/common/web/pojo/param/QueryParam.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-common/allinabc-common-web/src/main/java/com/allinabc/cloud/common/web/annotation/BizClassification.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-common/allinabc-common-web/src/main/java/com/allinabc/cloud/common/web/constant/QueryConstant.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-common/allinabc-common-web/src/main/java/com/allinabc/cloud/common/web/pojo/param/SqlOrder.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-common/allinabc-common-web/src/main/java/com/allinabc/cloud/common/web/enums/ResultCode.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-common/allinabc-common-web/src/main/java/com/allinabc/cloud/common/web/pojo/param/BaseQueryParam.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-common/allinabc-common-web/src/main/java/com/allinabc/cloud/common/web/pojo/resp/Result.java

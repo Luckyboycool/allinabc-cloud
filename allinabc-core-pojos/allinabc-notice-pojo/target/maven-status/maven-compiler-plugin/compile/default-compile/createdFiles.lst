@@ -1,0 +1,14 @@
+com/allinabc/cloud/notice/pojo/dto/ModifyNoticeTemplateDTO.class
+com/allinabc/cloud/notice/pojo/vo/NoticeTemplateVO.class
+com/allinabc/cloud/notice/pojo/po/NoticeParticipant.class
+com/allinabc/cloud/notice/pojo/dto/SendTypeModel.class
+com/allinabc/cloud/notice/pojo/dto/MailRequest.class
+com/allinabc/cloud/notice/pojo/po/NoticeTemplate.class
+com/allinabc/cloud/notice/pojo/dto/NoticeParticipantDTO.class
+com/allinabc/cloud/notice/pojo/po/NoticeCode.class
+com/allinabc/cloud/notice/pojo/dto/NoticeParticipantModel.class
+com/allinabc/cloud/notice/pojo/constant/NoticeConstant.class
+com/allinabc/cloud/notice/pojo/dto/QueryNoticeTemplateDTO.class
+com/allinabc/cloud/notice/pojo/dto/Attachment.class
+com/allinabc/cloud/notice/pojo/po/NoticeInfo.class
+com/allinabc/cloud/notice/pojo/dto/NoticeInfoModel.class

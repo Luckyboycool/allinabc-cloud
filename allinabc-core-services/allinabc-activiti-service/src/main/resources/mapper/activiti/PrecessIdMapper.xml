@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.allinabc.cloud.activiti.mapper.ProcessIdMapper">
+
+
+    <select id="selectDraftList" parameterType="com.allinabc.cloud.activiti.pojo.dto.DraftParam" resultType="com.allinabc.cloud.activiti.pojo.vo.DraftVO">
+       <if test="userType=='1'.toString()">
+           SELECT b.NAME,b.JOB_NUMBER,b.NAME||'('||b.JOB_NUMBER||')' as nameAndJobNumber,a.ID, a.PID, a.VERSION, a.SUBJECT, a.REQUEST_NO, a.APP_CODE, a.FORM_TYPE, a.PROCESS_ID, a.INSTANCE_ID, a.DRAFTER, a.REQUESTER, a.REQUEST_TIME, a.STATUS,  a.CREATED_BY, a.CREATE_TM, a.UPDATED_BY, a.UPDATE_TM, a.IS_DRAFT, a.MAIN_ID,a.USER_TYPE
+           FROM ADMINDA1.ADM_BASIC_FORM a ,ORGDA1.ORG_EMPLOYEE b where a.REQUESTER = b.id  and a.REQUESTER=#{userId} and a.IS_DRAFT='Y' and  a.FORM_TYPE in
+           <foreach collection="ls" item="item" open="(" close=")" separator=",">
+               #{item}
+           </foreach>
+           <if test="draftParam != null ">
+               <if test="draftParam.singleFormType != null and draftParam.singleFormType !=''">
+                   AND UPPER(a.FORM_TYPE) LIKE UPPER(concat(concat('%',#{draftParam.singleFormType,jdbcType=VARCHAR}),'%'))
+               </if>
+               <if test="draftParam.subject != null and draftParam.subject !=''">
+                   AND UPPER(a.SUBJECT) LIKE UPPER(concat(concat('%',#{draftParam.subject,jdbcType=VARCHAR}),'%'))
+               </if>
+               <if test="draftParam.requestTime != null">
+                   AND TO_CHAR(a.REQUEST_TIME,'YYYY-MM-DD') LIKE ('%'||#{draftParam.requestTime,jdbcType=VARCHAR}||'%')
+               </if>
+           </if>
+           ORDER BY
+           <choose>
+               <when test="draftParam != null and draftParam.sortParam != null and draftParam.sortParam.size > 0">
+                   a.${draftParam.sortParam.field}  ${draftParam.sortParam.method}
+               </when>
+               <otherwise>
+                   a.REQUEST_TIME DESC
+               </otherwise>
+           </choose>
+       </if>
+       <if test="userType=='2'.toString()">
+           SELECT b.USER_NAME as name,b.USER_NAME as nameAndJobNumber, a.ID, a.PID, a.VERSION, a.SUBJECT, a.REQUEST_NO, a.APP_CODE, a.FORM_TYPE, a.PROCESS_ID, a.INSTANCE_ID, a.DRAFTER, a.REQUESTER, a.REQUEST_TIME, a.STATUS,  a.CREATED_BY, a.CREATE_TM, a.UPDATED_BY, a.UPDATE_TM, a.IS_DRAFT, a.MAIN_ID,a.USER_TYPE
+           FROM ADMINDA1.ADM_BASIC_FORM a ,ORGDA1.ORG_CUSTOMER_ACCOUNT b where a.REQUESTER = b.id and a.REQUESTER=#{userId} and a.IS_DRAFT='Y' and a.FORM_TYPE IN
+           <foreach collection="ls" item="item" open="(" close=")" separator=",">
+               #{item}
+           </foreach>
+           <if test="draftParam != null ">
+               <if test="draftParam.singleFormType != null and draftParam.singleFormType !=''">
+                   AND UPPER(a.FORM_TYPE) LIKE UPPER(concat(concat('%',#{draftParam.singleFormType,jdbcType=VARCHAR}),'%'))
+               </if>
+               <if test="draftParam.subject != null and draftParam.subject !=''">
+                   AND UPPER(a.SUBJECT) LIKE UPPER(concat(concat('%',#{draftParam.subject,jdbcType=VARCHAR}),'%'))
+               </if>
+               <if test="draftParam.requestTime != null">
+                   AND TO_CHAR(a.REQUEST_TIME,'YYYY-MM-DD') LIKE ('%'||#{draftParam.requestTime,jdbcType=TIMESTAMP}||'%')
+               </if>
+           </if>
+           ORDER BY
+           <choose>
+               <when test="draftParam != null and draftParam.sortParam != null and draftParam.sortParam.size > 0">
+                   a.${draftParam.sortParam.field} ${draftParam.sortParam.method}
+               </when>
+               <otherwise>
+                   a.REQUEST_TIME DESC
+               </otherwise>
+           </choose>
+       </if>
+    </select>
+
+    <select id="selectFormNameList" resultType="java.util.HashMap">
+        SELECT FORM_TYPE,FORM_NAME FROM ADMINDA1.ADM_FORM_TYPE_NAME
+    </select>
+</mapper>

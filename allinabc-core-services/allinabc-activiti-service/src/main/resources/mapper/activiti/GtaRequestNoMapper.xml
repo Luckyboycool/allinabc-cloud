@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.allinabc.cloud.activiti.mapper.GtaRequestNoMapper">
+  <resultMap id="BaseResultMap" type="com.allinabc.cloud.activiti.pojo.po.GtaRequestNo">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="REQUEST_KEY" jdbcType="VARCHAR" property="key" />
+    <result column="REQUEST_VALUE" jdbcType="VARCHAR" property="value" />
+  </resultMap>
+
+  <select id="selectByKey" resultType="java.lang.String">
+    select 
+    REQUEST_VALUE
+    from ADMINDA1.ADM_REQUEST_NO
+    where REQUEST_KEY=#{key}
+  </select>
+  <insert id="insert" parameterType="com.allinabc.cloud.activiti.pojo.po.GtaRequestNo">
+    insert into ADMINDA1.ADM_REQUEST_NO (ID, REQUEST_KEY, REQUEST_VALUE
+      )
+    values (#{id,jdbcType=VARCHAR}, #{key,jdbcType=VARCHAR}, #{value,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="updateByKey">
+    update ADMINDA1.ADM_REQUEST_NO set REQUEST_VALUE=#{value} where REQUEST_KEY=#{key}
+  </update>
+</mapper>

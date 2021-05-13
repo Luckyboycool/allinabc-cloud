@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/processdef">
+  <process id="ifab_ipmerge_process" name="ipmerge" isExecutable="true">
+    <documentation>ifab_ipmerge流程</documentation>
+    <startEvent id="ifab_ipmerge_start" name="ifab_ipmerge 流程开始"></startEvent>
+    <userTask id="ifab_ipmerge_create" name="申请创建">
+      <extensionElements>
+        <activiti:taskListener event="create" delegateExpression="${ipmergeTaskListener}"></activiti:taskListener>
+        <activiti:taskListener event="complete" delegateExpression="${ipmergeTaskListener}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="sid-011ACFEC-06BE-434F-B575-6EB2F3BC8132" sourceRef="ifab_ipmerge_start" targetRef="ifab_ipmerge_create"></sequenceFlow>
+    <userTask id="ifab_ipmerge_ds_confirm" name="DS确认">
+      <extensionElements>
+        <activiti:taskListener event="create" delegateExpression="${ipmergeTaskListener}"></activiti:taskListener>
+        <activiti:taskListener event="complete" delegateExpression="${ipmergeTaskListener}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="sid-0E6F114C-5E71-4750-8E00-7A543C83A6F6" sourceRef="ifab_ipmerge_create" targetRef="ifab_ipmerge_ds_confirm"></sequenceFlow>
+    <exclusiveGateway id="ifab_ipmerge_ds_confirm_exclusivegateway" name="ds_confirm 审批决策"></exclusiveGateway>
+    <sequenceFlow id="sid-E3F44934-7827-47F0-BDD5-0E6E2FA3BBE1" sourceRef="ifab_ipmerge_ds_confirm" targetRef="ifab_ipmerge_ds_confirm_exclusivegateway"></sequenceFlow>
+    <serviceTask id="Task_08qykoa" name="userTaskService" activiti:delegateExpression="${userTaskService}"></serviceTask>
+    <endEvent id="end" name="ifab_ipmerge 流程结束"></endEvent>
+    <sequenceFlow id="sid-3FC5E555-51F9-4C2A-BFD2-4F6D70F49080" name="同意" sourceRef="ifab_ipmerge_ds_confirm_exclusivegateway" targetRef="Task_08qykoa">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${applyFlag=='Y'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-115EE2B0-18C9-4B4F-BAF8-B8D5AABD284C" sourceRef="Task_08qykoa" targetRef="end"></sequenceFlow>
+    <userTask id="ifab_ipmerge_return_update" name="退回后修改">
+      <extensionElements>
+        <activiti:taskListener event="create" delegateExpression="${deviceTaskListener}"></activiti:taskListener>
+        <activiti:taskListener event="complete" delegateExpression="${deviceTaskListener}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow100" sourceRef="ifab_ipmerge_return_update" targetRef="ifab_ipmerge_ds_confirm"></sequenceFlow>
+    <sequenceFlow id="sid-3D017BBC-28A7-4E40-9CE9-F515BB49A63F" name="驳回" sourceRef="ifab_ipmerge_ds_confirm_exclusivegateway" targetRef="ifab_ipmerge_return_update">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${applyFlag=='N'}]]></conditionExpression>
+    </sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_ifab_ipmerge_process">
+    <bpmndi:BPMNPlane bpmnElement="ifab_ipmerge_process" id="BPMNPlane_ifab_ipmerge_process">
+      <bpmndi:BPMNShape bpmnElement="ifab_ipmerge_start" id="BPMNShape_ifab_ipmerge_start">
+        <omgdc:Bounds height="30.0" width="30.0" x="345.0" y="30.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_ipmerge_create" id="BPMNShape_ifab_ipmerge_create">
+        <omgdc:Bounds height="80.0" width="100.0" x="310.0" y="105.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_ipmerge_ds_confirm" id="BPMNShape_ifab_ipmerge_ds_confirm">
+        <omgdc:Bounds height="80.0" width="100.0" x="310.0" y="240.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_ipmerge_ds_confirm_exclusivegateway" id="BPMNShape_ifab_ipmerge_ds_confirm_exclusivegateway">
+        <omgdc:Bounds height="40.0" width="40.0" x="340.0" y="360.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="Task_08qykoa" id="BPMNShape_Task_08qykoa">
+        <omgdc:Bounds height="80.0" width="100.0" x="310.0" y="450.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="end" id="BPMNShape_end">
+        <omgdc:Bounds height="28.0" width="28.0" x="346.0" y="585.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_ipmerge_return_update" id="BPMNShape_ifab_ipmerge_return_update">
+        <omgdc:Bounds height="80.0" width="100.0" x="60.0" y="186.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sid-E3F44934-7827-47F0-BDD5-0E6E2FA3BBE1" id="BPMNEdge_sid-E3F44934-7827-47F0-BDD5-0E6E2FA3BBE1">
+        <omgdi:waypoint x="360.0" y="320.0"></omgdi:waypoint>
+        <omgdi:waypoint x="360.0" y="360.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-0E6F114C-5E71-4750-8E00-7A543C83A6F6" id="BPMNEdge_sid-0E6F114C-5E71-4750-8E00-7A543C83A6F6">
+        <omgdi:waypoint x="360.0" y="185.0"></omgdi:waypoint>
+        <omgdi:waypoint x="360.0" y="240.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-115EE2B0-18C9-4B4F-BAF8-B8D5AABD284C" id="BPMNEdge_sid-115EE2B0-18C9-4B4F-BAF8-B8D5AABD284C">
+        <omgdi:waypoint x="360.0" y="530.0"></omgdi:waypoint>
+        <omgdi:waypoint x="360.0" y="585.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow100" id="BPMNEdge_flow100">
+        <omgdi:waypoint x="160.0" y="226.0"></omgdi:waypoint>
+        <omgdi:waypoint x="228.25" y="226.0"></omgdi:waypoint>
+        <omgdi:waypoint x="228.25" y="280.0"></omgdi:waypoint>
+        <omgdi:waypoint x="310.0" y="280.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-3D017BBC-28A7-4E40-9CE9-F515BB49A63F" id="BPMNEdge_sid-3D017BBC-28A7-4E40-9CE9-F515BB49A63F">
+        <omgdi:waypoint x="340.0" y="380.0"></omgdi:waypoint>
+        <omgdi:waypoint x="110.0" y="380.0"></omgdi:waypoint>
+        <omgdi:waypoint x="110.0" y="266.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-3FC5E555-51F9-4C2A-BFD2-4F6D70F49080" id="BPMNEdge_sid-3FC5E555-51F9-4C2A-BFD2-4F6D70F49080">
+        <omgdi:waypoint x="360.0" y="400.0"></omgdi:waypoint>
+        <omgdi:waypoint x="360.0" y="450.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-011ACFEC-06BE-434F-B575-6EB2F3BC8132" id="BPMNEdge_sid-011ACFEC-06BE-434F-B575-6EB2F3BC8132">
+        <omgdi:waypoint x="360.0" y="60.0"></omgdi:waypoint>
+        <omgdi:waypoint x="360.0" y="105.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

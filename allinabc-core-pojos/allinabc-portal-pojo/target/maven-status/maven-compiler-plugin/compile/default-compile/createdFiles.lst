@@ -1,0 +1,6 @@
+com/allinabc/cloud/portal/pojo/vo/AnnouncementDetailVO.class
+com/allinabc/cloud/portal/pojo/dto/AnnouncementInsertDTO.class
+com/allinabc/cloud/portal/pojo/po/Announcement.class
+com/allinabc/cloud/portal/pojo/dto/AnnouncementPageDto.class
+com/allinabc/cloud/portal/pojo/vo/AnnouncementVO.class
+com/allinabc/cloud/portal/pojo/dto/AnnouncementUpdateDTO.class

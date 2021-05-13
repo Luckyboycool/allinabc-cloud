@@ -1,0 +1,52 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: allinabc-demo
+  profiles:
+    active: develop
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    nacos:
+      config:
+        server-addr: ${NACOS_ADDR:192.168.2.73}:${NACOS_PORT:30058}
+        file-extension: yml
+        group: WEB_BACKEND
+        namespace: ${NACOS_NAMESPACE:10001}
+        extension-configs[0]:
+          data-id: allinabc-common.yml
+        refreshEnabled: false
+      discovery:
+        server-addr: ${NACOS_ADDR:192.168.2.73}:${NACOS_PORT:30058}
+        group: WEB_BACKEND
+        namespace: ${NACOS_NAMESPACE:10001}
+
+logging:
+  file:
+    path: D://log/
+  level:
+    com.allinabc.cloud: debug
+    org.springframework: warn
+
+
+
+# 自定义Web Module需要继承jems-common-web, 并设置以下参数, true则进行webmvc和datasource配置
+jems:
+  web:
+    code: ALLINABC-demo
+    enabled: true
+  db:
+    typeandversion: oracle
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+        #exclude: configprops
+  endpoint:
+    health:
+      show-details: ALWAYS

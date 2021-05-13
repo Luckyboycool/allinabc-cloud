@@ -1,0 +1,9 @@
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-apis/allinabc-org-api/src/main/java/com/allinabc/cloud/org/api/service/api/ApiOrgService.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-apis/allinabc-org-api/src/main/java/com/allinabc/cloud/org/api/service/impl/feign/impl/ApiFeignOrgServiceImpl.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-apis/allinabc-org-api/src/main/java/com/allinabc/cloud/org/api/service/impl/feign/impl/ApiFeignCustomerAccountServiceImpl.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-apis/allinabc-org-api/src/main/java/com/allinabc/cloud/org/api/service/impl/feign/impl/ApiFeignEmployeeServiceImpl.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-apis/allinabc-org-api/src/main/java/com/allinabc/cloud/org/api/service/impl/feign/client/OrgServiceApi.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-apis/allinabc-org-api/src/main/java/com/allinabc/cloud/org/api/service/api/ApiEmployeeService.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-apis/allinabc-org-api/src/main/java/com/allinabc/cloud/org/api/service/impl/feign/client/CustomerAccountServiceApi.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-apis/allinabc-org-api/src/main/java/com/allinabc/cloud/org/api/service/api/ApiCustomerAccountService.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-apis/allinabc-org-api/src/main/java/com/allinabc/cloud/org/api/service/impl/feign/client/EmployeeServiceApi.java

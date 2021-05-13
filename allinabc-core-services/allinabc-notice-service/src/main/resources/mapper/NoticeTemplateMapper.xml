@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.allinabc.cloud.notice.mapper.NoticeTemplateMapper">
+
+    <select id="selectTemplateList" parameterType="com.allinabc.cloud.notice.pojo.dto.QueryNoticeTemplateDTO" resultType="com.allinabc.cloud.notice.pojo.vo.NoticeTemplateVO">
+        select id,content,is_html,type from nte_notice_template
+        <where>
+            <if test="id!=null and id!=''">
+               id=#{id,jdbcType=VARCHAR} and
+            </if>
+            <if test="isHtml!=null">
+                is_html=#{isHtml,jdbcType=BIT} and
+            </if>
+            <if test="type!=null and type!=''">
+                type=#{type,jdbcType=VARCHAR} and
+            </if>
+            <if test="isAvailable!=null and isAvailable!=''">
+                is_available=#{isAvailable,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+</mapper>

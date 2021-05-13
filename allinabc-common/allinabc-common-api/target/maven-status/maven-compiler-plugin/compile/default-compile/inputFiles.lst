@@ -1,0 +1,3 @@
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-common/allinabc-common-api/src/main/java/com/allinabc/cloud/common/api/interceptor/FeignInterceptor.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-common/allinabc-common-api/src/main/java/com/allinabc/cloud/common/api/config/HystrixConfig.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-common/allinabc-common-api/src/main/java/com/allinabc/cloud/common/api/strategy/HystrixConcurrencyStrategyCustomize.java

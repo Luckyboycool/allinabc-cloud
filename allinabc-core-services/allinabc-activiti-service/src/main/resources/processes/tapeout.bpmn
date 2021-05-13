@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/processdef">
+  <process id="ifab_tapeout_process" name="tapeout" isExecutable="true">
+    <startEvent id="ifab_tapeout_start" name="tapeout开始"></startEvent>
+    <userTask id="ifab_tapeout_create" name="申请创建">
+      <extensionElements>
+        <activiti:taskListener event="create" delegateExpression="${tapeoutTaskListener}"></activiti:taskListener>
+        <activiti:taskListener event="complete" delegateExpression="${tapeoutTaskListener}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="sid-94902C68-ADD9-435B-930D-D9A975F95592" sourceRef="ifab_tapeout_start" targetRef="ifab_tapeout_create"></sequenceFlow>
+    <userTask id="ifab_tapeout_mask" name="Mask Confirm">
+      <extensionElements>
+        <activiti:taskListener event="create" delegateExpression="${tapeoutTaskListener}"></activiti:taskListener>
+        <activiti:taskListener event="complete" delegateExpression="${tapeoutTaskListener}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="sid-72BCC49C-96D0-46B0-8EDA-5AA6C4F7F14F" sourceRef="ifab_tapeout_create" targetRef="ifab_tapeout_mask"></sequenceFlow>
+    <exclusiveGateway id="ifab_tapeout_mask_exclusive_gateway" name="Mask  Confirm排它网关"></exclusiveGateway>
+    <userTask id="ifab_tapeout_drc_check" name="DRC Check">
+      <extensionElements>
+        <activiti:taskListener event="create" delegateExpression="${tapeoutTaskListener}"></activiti:taskListener>
+        <activiti:taskListener event="complete" delegateExpression="${tapeoutTaskListener}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <exclusiveGateway id="ifab_tapeout_drc_exclusive_gateway" name="DRC Check排它网关"></exclusiveGateway>
+    <userTask id="ifab_tapeout_pie_confirm" name="PIE Confirm">
+      <extensionElements>
+        <activiti:taskListener event="create" delegateExpression="${tapeoutTaskListener}"></activiti:taskListener>
+        <activiti:taskListener event="complete" delegateExpression="${tapeoutTaskListener}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <exclusiveGateway id="sid-D0DC278B-5CB0-472C-A524-59F2E5D5CD10"></exclusiveGateway>
+    <sequenceFlow id="sid-58A3756E-6C9A-429C-97BE-8AFF08181479" sourceRef="ifab_tapeout_pie_confirm" targetRef="sid-D0DC278B-5CB0-472C-A524-59F2E5D5CD10"></sequenceFlow>
+    <userTask id="ifab_tapeout_data_handle" name="数据处理">
+      <extensionElements>
+        <activiti:taskListener event="create" delegateExpression="${tapeoutTaskListener}"></activiti:taskListener>
+        <activiti:taskListener event="complete" delegateExpression="${tapeoutTaskListener}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <exclusiveGateway id="ifab_tapeout_data_exclusive_gateway" name="数据处理排它网关"></exclusiveGateway>
+    <userTask id="ifab_tapeout_data_pie_confirm" name="PIE Confirm">
+      <extensionElements>
+        <activiti:taskListener event="create" delegateExpression="${tapeoutTaskListener}"></activiti:taskListener>
+        <activiti:taskListener event="complete" delegateExpression="${tapeoutTaskListener}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <exclusiveGateway id="ifab_tapeout_data_pie_exclusive_gateway" name="PIE排它网关"></exclusiveGateway>
+    <sequenceFlow id="sid-37008B6A-0C8C-4D44-AC0C-7CB25FE78285" sourceRef="ifab_tapeout_data_pie_confirm" targetRef="ifab_tapeout_data_pie_exclusive_gateway"></sequenceFlow>
+    <serviceTask id="ifab_tapeout_service_task" name="serviceTask" activiti:delegateExpression="${userTaskService}"></serviceTask>
+    <endEvent id="end" name="tapeout结束"></endEvent>
+    <sequenceFlow id="sid-1EEE7CF3-0B57-4EEE-BB7D-AF58D851A64A" sourceRef="ifab_tapeout_service_task" targetRef="end"></sequenceFlow>
+    <sequenceFlow id="ifab_tapeout_data_pie_reject" name="驳回" sourceRef="ifab_tapeout_data_pie_exclusive_gateway" targetRef="ifab_tapeout_data_handle">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${applyFlag=='N'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="ifab_tapeout_pie_approve" name="核可" sourceRef="sid-D0DC278B-5CB0-472C-A524-59F2E5D5CD10" targetRef="ifab_tapeout_data_handle">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${applyFlag=='Y'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="ifab_tapeout_pie_reject" name="驳回" sourceRef="sid-D0DC278B-5CB0-472C-A524-59F2E5D5CD10" targetRef="ifab_tapeout_drc_check">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${applyFlag=='N'}]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="ifab_tapeout_back_update" name="退回后修改">
+      <extensionElements>
+        <activiti:taskListener event="create" delegateExpression="${tapeoutTaskListener}"></activiti:taskListener>
+        <activiti:taskListener event="complete" delegateExpression="${tapeoutTaskListener}"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="sid-C47C0384-306E-458F-B5AE-1F806BF84AF4" sourceRef="ifab_tapeout_drc_check" targetRef="ifab_tapeout_drc_exclusive_gateway"></sequenceFlow>
+    <sequenceFlow id="ifab_tapeout_drc_approve" name="核可" sourceRef="ifab_tapeout_drc_exclusive_gateway" targetRef="ifab_tapeout_pie_confirm">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${applyFlag=='Y'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="ifab_tapeout_drc_reject" name="驳回" sourceRef="ifab_tapeout_drc_exclusive_gateway" targetRef="ifab_tapeout_back_update">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${applyFlag=='N'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="ifab_tapeout_mask_approve" name="核可（需要DRC Check）" sourceRef="ifab_tapeout_mask_exclusive_gateway" targetRef="ifab_tapeout_drc_check">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${applyFlag=='Y' && isOthers=='Y'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-1A0B2AFB-C966-4DE4-A0A7-D58CD8E994C0" name="核可（不需要DRC Check）" sourceRef="ifab_tapeout_mask_exclusive_gateway" targetRef="ifab_tapeout_data_handle">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${applyFlag=='Y' && isOthers=='N'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="ifab_tapeout_mask_reject" name="驳回" sourceRef="ifab_tapeout_mask_exclusive_gateway" targetRef="ifab_tapeout_back_update">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${applyFlag=='N' && isOthers=='N'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-20726EC3-1EBA-4030-8569-2B0C18A81884" sourceRef="ifab_tapeout_mask" targetRef="ifab_tapeout_mask_exclusive_gateway"></sequenceFlow>
+    <sequenceFlow id="ifab_tapeout_renew" name="重新提交" sourceRef="ifab_tapeout_back_update" targetRef="ifab_tapeout_mask">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${applyFlag=='Y'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="ifab_tapeout_data_pie_approve" name="核可" sourceRef="ifab_tapeout_data_pie_exclusive_gateway" targetRef="ifab_tapeout_service_task">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${applyFlag=='Y'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-D4B0D88D-0FD3-451E-A930-04348D67D13A" name="不需要PIE" sourceRef="ifab_tapeout_data_exclusive_gateway" targetRef="ifab_tapeout_service_task">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${applyFlag=='Y' &&  isOthers=='N'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-4D40EFDE-0DB7-462F-B3D7-8ED096EE4850" sourceRef="ifab_tapeout_data_handle" targetRef="ifab_tapeout_data_exclusive_gateway"></sequenceFlow>
+    <sequenceFlow id="ifab_tapeout_data_approve" name="需要PIE" sourceRef="ifab_tapeout_data_exclusive_gateway" targetRef="ifab_tapeout_data_pie_confirm">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${applyFlag=='Y' && isOthers=='Y'}]]></conditionExpression>
+    </sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_ifab_tapeout_process">
+    <bpmndi:BPMNPlane bpmnElement="ifab_tapeout_process" id="BPMNPlane_ifab_tapeout_process">
+      <bpmndi:BPMNShape bpmnElement="ifab_tapeout_start" id="BPMNShape_ifab_tapeout_start">
+        <omgdc:Bounds height="30.0" width="30.0" x="364.40219629698606" y="30.2823694874415"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_tapeout_create" id="BPMNShape_ifab_tapeout_create">
+        <omgdc:Bounds height="80.0" width="100.0" x="329.40219629698606" y="120.28236948744151"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_tapeout_mask" id="BPMNShape_ifab_tapeout_mask">
+        <omgdc:Bounds height="80.00000000000003" width="100.0" x="329.40219629698606" y="250.26750348314417"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_tapeout_mask_exclusive_gateway" id="BPMNShape_ifab_tapeout_mask_exclusive_gateway">
+        <omgdc:Bounds height="40.0" width="40.0" x="359.40219629698606" y="371.390020979352"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_tapeout_drc_check" id="BPMNShape_ifab_tapeout_drc_check">
+        <omgdc:Bounds height="68.72073226325614" width="118.41824463149447" x="320.19307398123885" y="492.66397109592793"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_tapeout_drc_exclusive_gateway" id="BPMNShape_ifab_tapeout_drc_exclusive_gateway">
+        <omgdc:Bounds height="40.0" width="40.0" x="359.4021962969861" y="629.8821823619121"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_tapeout_pie_confirm" id="BPMNShape_ifab_tapeout_pie_confirm">
+        <omgdc:Bounds height="80.0" width="99.99999999999994" x="329.40219629698606" y="742.650732098163"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-D0DC278B-5CB0-472C-A524-59F2E5D5CD10" id="BPMNShape_sid-D0DC278B-5CB0-472C-A524-59F2E5D5CD10">
+        <omgdc:Bounds height="40.0" width="40.0" x="359.40219629698606" y="878.2270789101324"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_tapeout_data_handle" id="BPMNShape_ifab_tapeout_data_handle">
+        <omgdc:Bounds height="80.0" width="100.0" x="615.5380582691514" y="544.9359291122494"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_tapeout_data_exclusive_gateway" id="BPMNShape_ifab_tapeout_data_exclusive_gateway">
+        <omgdc:Bounds height="40.0" width="40.0" x="645.5380582691514" y="675.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_tapeout_data_pie_confirm" id="BPMNShape_ifab_tapeout_data_pie_confirm">
+        <omgdc:Bounds height="80.0" width="100.00000000000011" x="615.5380582691513" y="788.1539145496436"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_tapeout_data_pie_exclusive_gateway" id="BPMNShape_ifab_tapeout_data_pie_exclusive_gateway">
+        <omgdc:Bounds height="40.0" width="40.0" x="645.5380582691514" y="924.6634619040857"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_tapeout_service_task" id="BPMNShape_ifab_tapeout_service_task">
+        <omgdc:Bounds height="80.0" width="100.00000000000011" x="615.5380582691513" y="1038.4214180327879"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="end" id="BPMNShape_end">
+        <omgdc:Bounds height="28.0" width="28.0" x="651.5380582691514" y="1197.6825566129703"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ifab_tapeout_back_update" id="BPMNShape_ifab_tapeout_back_update">
+        <omgdc:Bounds height="68.85994246832712" width="114.88452547032915" x="135.11547452967085" y="255.83753224898066"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="ifab_tapeout_data_pie_reject" id="BPMNEdge_ifab_tapeout_data_pie_reject">
+        <omgdi:waypoint x="685.4285086810096" y="944.5539123159439"></omgdi:waypoint>
+        <omgdi:waypoint x="786.0" y="944.0"></omgdi:waypoint>
+        <omgdi:waypoint x="786.0" y="584.0"></omgdi:waypoint>
+        <omgdi:waypoint x="715.5380582691514" y="584.5474540890173"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="ifab_tapeout_mask_reject" id="BPMNEdge_ifab_tapeout_mask_reject">
+        <omgdi:waypoint x="359.40219629698606" y="391.390020979352"></omgdi:waypoint>
+        <omgdi:waypoint x="192.55773726483542" y="391.390020979352"></omgdi:waypoint>
+        <omgdi:waypoint x="192.55773726483542" y="324.6974747173078"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="ifab_tapeout_drc_reject" id="BPMNEdge_ifab_tapeout_drc_reject">
+        <omgdi:waypoint x="359.49590373763476" y="649.7884749212635"></omgdi:waypoint>
+        <omgdi:waypoint x="192.0" y="649.0"></omgdi:waypoint>
+        <omgdi:waypoint x="192.50420746708653" y="324.6974747173078"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-37008B6A-0C8C-4D44-AC0C-7CB25FE78285" id="BPMNEdge_sid-37008B6A-0C8C-4D44-AC0C-7CB25FE78285">
+        <omgdi:waypoint x="665.5380582691514" y="868.1539145496436"></omgdi:waypoint>
+        <omgdi:waypoint x="665.5380582691514" y="924.6634619040857"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-58A3756E-6C9A-429C-97BE-8AFF08181479" id="BPMNEdge_sid-58A3756E-6C9A-429C-97BE-8AFF08181479">
+        <omgdi:waypoint x="379.40219629698606" y="822.650732098163"></omgdi:waypoint>
+        <omgdi:waypoint x="379.40219629698606" y="878.2270789101324"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-4D40EFDE-0DB7-462F-B3D7-8ED096EE4850" id="BPMNEdge_sid-4D40EFDE-0DB7-462F-B3D7-8ED096EE4850">
+        <omgdi:waypoint x="665.7189488590095" y="624.9359291122494"></omgdi:waypoint>
+        <omgdi:waypoint x="665.9472020985651" y="675.4091438294137"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-1A0B2AFB-C966-4DE4-A0A7-D58CD8E994C0" id="BPMNEdge_sid-1A0B2AFB-C966-4DE4-A0A7-D58CD8E994C0">
+        <omgdi:waypoint x="399.3749209414855" y="391.3627456238515"></omgdi:waypoint>
+        <omgdi:waypoint x="665.0" y="391.0"></omgdi:waypoint>
+        <omgdi:waypoint x="665.4270817684866" y="544.9359291122494"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="ifab_tapeout_data_pie_approve" id="BPMNEdge_ifab_tapeout_data_pie_approve">
+        <omgdi:waypoint x="665.5380582691514" y="964.6634619040857"></omgdi:waypoint>
+        <omgdi:waypoint x="665.5380582691514" y="1038.4214180327879"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-1EEE7CF3-0B57-4EEE-BB7D-AF58D851A64A" id="BPMNEdge_sid-1EEE7CF3-0B57-4EEE-BB7D-AF58D851A64A">
+        <omgdi:waypoint x="665.5380582691514" y="1118.4214180327879"></omgdi:waypoint>
+        <omgdi:waypoint x="665.5380582691514" y="1197.6825566129703"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="ifab_tapeout_pie_approve" id="BPMNEdge_ifab_tapeout_pie_approve">
+        <omgdi:waypoint x="399.3571520768993" y="898.1820346900456"></omgdi:waypoint>
+        <omgdi:waypoint x="480.0" y="898.0"></omgdi:waypoint>
+        <omgdi:waypoint x="480.0" y="584.0"></omgdi:waypoint>
+        <omgdi:waypoint x="615.5380582691514" y="584.6837088613261"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-C47C0384-306E-458F-B5AE-1F806BF84AF4" id="BPMNEdge_sid-C47C0384-306E-458F-B5AE-1F806BF84AF4">
+        <omgdi:waypoint x="379.40219629698606" y="561.3847033591841"></omgdi:waypoint>
+        <omgdi:waypoint x="379.4021962969861" y="629.8821823619121"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="ifab_tapeout_pie_reject" id="BPMNEdge_ifab_tapeout_pie_reject">
+        <omgdi:waypoint x="359.4487149072391" y="898.1805602998793"></omgdi:waypoint>
+        <omgdi:waypoint x="282.0" y="898.0"></omgdi:waypoint>
+        <omgdi:waypoint x="282.0" y="527.024337227556"></omgdi:waypoint>
+        <omgdi:waypoint x="320.19307398123885" y="527.024337227556"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="ifab_tapeout_drc_approve" id="BPMNEdge_ifab_tapeout_drc_approve">
+        <omgdi:waypoint x="379.4021962969861" y="669.8821823619121"></omgdi:waypoint>
+        <omgdi:waypoint x="379.40219629698606" y="742.650732098163"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-72BCC49C-96D0-46B0-8EDA-5AA6C4F7F14F" id="BPMNEdge_sid-72BCC49C-96D0-46B0-8EDA-5AA6C4F7F14F">
+        <omgdi:waypoint x="379.40219629698606" y="200.2823694874415"></omgdi:waypoint>
+        <omgdi:waypoint x="379.40219629698606" y="250.26750348314417"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="ifab_tapeout_mask_approve" id="BPMNEdge_ifab_tapeout_mask_approve">
+        <omgdi:waypoint x="379.40219629698606" y="411.390020979352"></omgdi:waypoint>
+        <omgdi:waypoint x="379.40219629698606" y="492.66397109592793"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-94902C68-ADD9-435B-930D-D9A975F95592" id="BPMNEdge_sid-94902C68-ADD9-435B-930D-D9A975F95592">
+        <omgdi:waypoint x="379.40219629698606" y="60.2823694874415"></omgdi:waypoint>
+        <omgdi:waypoint x="379.40219629698606" y="120.28236948744151"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="ifab_tapeout_data_approve" id="BPMNEdge_ifab_tapeout_data_approve">
+        <omgdi:waypoint x="665.5380582691514" y="715.0"></omgdi:waypoint>
+        <omgdi:waypoint x="665.5380582691514" y="788.1539145496436"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-20726EC3-1EBA-4030-8569-2B0C18A81884" id="BPMNEdge_sid-20726EC3-1EBA-4030-8569-2B0C18A81884">
+        <omgdi:waypoint x="379.40219629698606" y="330.2675034831442"></omgdi:waypoint>
+        <omgdi:waypoint x="379.40219629698606" y="371.390020979352"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-D4B0D88D-0FD3-451E-A930-04348D67D13A" id="BPMNEdge_sid-D4B0D88D-0FD3-451E-A930-04348D67D13A">
+        <omgdi:waypoint x="685.0380582691514" y="695.5"></omgdi:waypoint>
+        <omgdi:waypoint x="823.0" y="695.5"></omgdi:waypoint>
+        <omgdi:waypoint x="823.0" y="1078.0"></omgdi:waypoint>
+        <omgdi:waypoint x="715.5380582691514" y="1078.2876021950826"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="ifab_tapeout_renew" id="BPMNEdge_ifab_tapeout_renew">
+        <omgdi:waypoint x="250.0" y="290.2675034831442"></omgdi:waypoint>
+        <omgdi:waypoint x="329.40219629698606" y="290.2675034831442"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

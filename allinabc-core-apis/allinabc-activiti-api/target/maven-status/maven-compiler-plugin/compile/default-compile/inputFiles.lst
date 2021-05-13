@@ -1,0 +1,9 @@
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-apis/allinabc-activiti-api/src/main/java/com/allinabc/cloud/activiti/api/service/impl/feign/impl/ApiFeignProcessServiceImpl.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-apis/allinabc-activiti-api/src/main/java/com/allinabc/cloud/activiti/api/service/impl/feign/client/GtaRequestNoServiceApi.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-apis/allinabc-activiti-api/src/main/java/com/allinabc/cloud/activiti/api/service/impl/feign/impl/ApiFeignGtaRequestNoServiceImpl.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-apis/allinabc-activiti-api/src/main/java/com/allinabc/cloud/activiti/api/service/impl/feign/client/ProcessServiceApi.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-apis/allinabc-activiti-api/src/main/java/com/allinabc/cloud/activiti/api/service/impl/feign/client/FormPermissionServiceApi.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-apis/allinabc-activiti-api/src/main/java/com/allinabc/cloud/activiti/api/service/api/ApiProcessService.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-apis/allinabc-activiti-api/src/main/java/com/allinabc/cloud/activiti/api/service/api/ApiGtaRequestNoService.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-apis/allinabc-activiti-api/src/main/java/com/allinabc/cloud/activiti/api/service/impl/feign/impl/ApiFormPermissionServiceImpl.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-core-apis/allinabc-activiti-api/src/main/java/com/allinabc/cloud/activiti/api/service/api/ApiFormPermissionService.java

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.allinabc.cloud.activiti.mapper.BizGroupAuditorMapper">
+
+    <select id="selectGroupNameByVariable" resultType="java.lang.String">
+        select GROUP_NAME from ACTDA1.BIZ_GROUP_AUDITOR where NODE_ID=#{nodeKey} and FORM_TYPE=#{formType} and DICT_VALUE=#{dictValue} and IS_AVAILABLE='Y'
+    </select>
+
+</mapper>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>allinabc-core-services</artifactId>
+    <packaging>pom</packaging>
+    <name>Allinabc Cloud Core Services</name>
+    <description>Allinabc Cloud Core Services</description>
+
+    <parent>
+        <artifactId>allinabc-parent</artifactId>
+        <groupId>com.allinabc</groupId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../allinabc-parent</relativePath>
+    </parent>
+
+    <modules>
+        <module>allinabc-admin-service</module>
+        <module>allinabc-org-service</module>
+        <module>allinabc-authority-service</module>
+        <module>allinabc-attach-service</module>
+        <module>allinabc-notice-service</module>
+        <module>allinabc-search-service</module>
+        <!--<module>allinabc-demo-service</module>-->
+        <module>allinabc-activiti-service</module>
+        <module>allinabc-portal-service</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.allinabc</groupId>
+            <artifactId>allinabc-web-starter</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.allinabc</groupId>
+            <artifactId>allinabc-redis-starter</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.1.11.RELEASE</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>

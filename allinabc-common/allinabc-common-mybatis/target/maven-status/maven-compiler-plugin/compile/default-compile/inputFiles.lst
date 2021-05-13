@@ -1,0 +1,9 @@
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-common/allinabc-common-mybatis/src/main/java/com/allinabc/common/mybatis/annotation/EnableMybatis.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-common/allinabc-common-mybatis/src/main/java/com/allinabc/common/mybatis/config/MyBatisConfig.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-common/allinabc-common-mybatis/src/main/java/com/allinabc/common/mybatis/util/PropertyFilterHelper.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-common/allinabc-common-mybatis/src/main/java/com/allinabc/common/mybatis/config/DruidProperties.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-common/allinabc-common-mybatis/src/main/java/com/allinabc/common/mybatis/service/impl/MybatisCommonServiceImpl.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-common/allinabc-common-mybatis/src/main/java/com/allinabc/common/mybatis/service/MybatisCommonService.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-common/allinabc-common-mybatis/src/main/java/com/allinabc/common/mybatis/controller/MybatisBaseCrudController.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-common/allinabc-common-mybatis/src/main/java/com/allinabc/common/mybatis/util/PageHelper.java
+/Users/caoliming/IdeaProjects/allinabc-cloud/allinabc-common/allinabc-common-mybatis/src/main/java/com/allinabc/common/mybatis/mapper/MybatisCommonBaseMapper.java

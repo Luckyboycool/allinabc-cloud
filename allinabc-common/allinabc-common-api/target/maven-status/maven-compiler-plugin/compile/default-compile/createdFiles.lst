@@ -1,0 +1,4 @@
+com/allinabc/cloud/common/api/config/HystrixConfig.class
+com/allinabc/cloud/common/api/interceptor/FeignInterceptor.class
+com/allinabc/cloud/common/api/strategy/HystrixConcurrencyStrategyCustomize.class
+com/allinabc/cloud/common/api/strategy/HystrixConcurrencyStrategyCustomize$HystrixCustomizeCallable.class

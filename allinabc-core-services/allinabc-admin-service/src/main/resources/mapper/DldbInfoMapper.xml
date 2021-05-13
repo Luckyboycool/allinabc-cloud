@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.allinabc.cloud.admin.mapper.DldbInfoMapper">
+
+    <select id="findList" resultType="com.allinabc.cloud.admin.pojo.vo.DldbVO">
+        SELECT ADI.*,B.* FROM ADMINDA1.ADM_DLDB_INFO ADI
+                         INNER JOIN ADMINDA1.ADM_DLDB_DETAIL B ON ADI.ID = B.DLDB_INFO_ID
+        <where>
+            <if test="deviceName != null and deviceName != ''">
+                UPPER(ADI.DEVICE_NAME) LIKE UPPER(('%'||#{deviceName}||'%'))
+            </if>
+            <if test="productId != null and productId != ''">
+                AND UPPER(B.PROD_ID) LIKE UPPER('%'||#{productId}||'%')
+            </if>
+        </where>
+    </select>
+</mapper>

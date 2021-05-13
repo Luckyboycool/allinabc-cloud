@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.allinabc.cloud.activiti.mapper.NodeAuditorMapper">
+
+
+    <insert id="saveNodeAuditor" useGeneratedKeys="false">
+      <if test="ls!=null and ls.size>0">
+          insert ALL
+          <foreach collection ="ls" item="item" index= "index">
+              into ADMINDA1.ADM_NODE_AUDITOR (ID, NODE_ID, AUDITOR_TYPE,PROCESS_ID, AUDITOR)
+              values
+              (
+              #{item.id}, #{item.nodeId},#{item.auditorType},#{item.processId},#{item.auditor}
+              )
+          </foreach >
+          SELECT 1 FROM DUAL
+      </if>
+    </insert>
+
+
+
+    <select id="selectAuditByNodeIdAndProcessId" resultType="java.lang.String">
+        <if test="type!=null and type!='' and type=='2'.toString()">
+            select distinct b.id AS auditor from ADMINDA1.ADM_ROLE_USER a
+            left join ORGDA1.ORG_EMPLOYEE b on a.USER_ID =b.ID where a.role_id=#{auditor}
+       </if>
+
+        <if test="type!=null and type!='' and type=='3'.toString()">
+            select distinct USER_ID from ADMINDA1.ADM_GROUP_USER where GROUP_NAME=#{auditor}
+        </if>
+
+        <if test="type!=null and type!='' and type=='4'.toString()">
+            select id from ORGDA1.ORG_EMPLOYEE where DEPT_ID=#{auditor} and STATUS='1'
+       </if>
+
+       <if test="type!=null and type!='' and type=='6'.toString()">
+           select b.ASSISTANT from ORGDA1.ORG_EMPLOYEE a ,ORGDA1.ORG_DEPARTMENT b where a.DEPT_ID=b.ID and a.status='1' and a.id=#{auditor}
+       </if>
+
+    </select>
+
+    <select id="selectNodeAuditTypeByNodeIdAndProcessId" resultType="com.allinabc.cloud.activiti.pojo.po.NodeAuditor">
+      select id, node_id, auditor_type, auditor, process_id from ADMINDA1.ADM_NODE_AUDITOR
+      where NODE_ID=#{nodeId} and PROCESS_ID=#{processDefinitionKey}
+    </select>
+    <select id="selectAuditAndTypeByNodeIdAndProcessId" resultType="com.allinabc.cloud.activiti.pojo.bo.AuditorModel">
+        <if test="type!=null and type!='' and type=='2'.toString()">
+            select distinct b.id AS auditorKey,b.name as auditorName,c.ROLE_NAME as auditorTypeName,${type} as auditorType from ADMINDA1.ADM_ROLE_USER a
+            left join ORGDA1.ORG_EMPLOYEE b on a.USER_ID =b.ID left join ADMINDA1.ADM_ROLE c on a.ROLE_ID=c.ID where a.role_id=#{auditor}
+        </if>
+
+        <if test="type!=null and type!='' and type=='3'.toString()">
+            select distinct a.id AS auditorKey,a.name as auditorName,${type} as auditorType,b.GROUP_NAME as auditorTypeName from ORGDA1.ORG_EMPLOYEE a left join ADMINDA1.ADM_GROUP b on a.GROUP_ID =b.ID
+             where  a.STATUS='1' and a.GROUP_ID=#{auditor}
+        </if>
+
+        <if test="type!=null and type!='' and type=='4'.toString()">
+            select a.id AS auditorKey,a.name as auditorName,${type} as auditorType ,b.NAME as auditorTypeName from ORGDA1.ORG_EMPLOYEE a left join ORGDA1.ORG_DEPARTMENT b on a.DEPT_ID = b.id
+             where DEPT_ID=#{auditor} and STATUS='1'
+        </if>
+
+        <if test="type!=null and type!='' and type=='6'.toString()">
+            select b.ASSISTANT AS auditorKey,b.name as auditorName,${type} as auditorType from ORGDA1.ORG_EMPLOYEE a ,ORGDA1.ORG_DEPARTMENT b where a.DEPT_ID=b.ID and a.status='1' and a.id=#{auditor}
+        </if>
+    </select>
+    <select id="selectUserNameByUserType" resultType="java.lang.String">
+        <if test="userType!=null and userType!='' and userType=='1'.toString()">
+            select name from ORGDA1.ORG_EMPLOYEE where id=#{requester}
+        </if>
+        <if test="userType!=null and userType!='' and userType=='2'.toString()">
+            select USER_NAME from ORGDA1.ORG_CUSTOMER_ACCOUNT where id=#{requester}
+        </if>
+    </select>
+    <select id="selectUserNameAndJobNumByUserType" resultType="com.allinabc.cloud.activiti.pojo.bo.NameModel">
+        <if test="userType!=null and userType!='' and userType=='1'.toString()">
+            select name,JOB_NUMBER,name||'('||JOB_NUMBER||')' as nameAndJobNumber from ORGDA1.ORG_EMPLOYEE where id=#{requester}
+        </if>
+        <if test="userType!=null and userType!='' and userType=='2'.toString()">
+            select USER_NAME,USER_NAME as nameAndJobNumber from ORGDA1.ORG_CUSTOMER_ACCOUNT where id=#{requester}
+        </if>
+    </select>
+
+    <select id="selectEmployeeDeptmentIdById" resultType="java.lang.String">
+        select DEPT_ID from ORGDA1.ORG_EMPLOYEE where id=#{id}
+    </select>
+
+    <select id="selectEmployeeGroupNameById" resultType="java.lang.String">
+        select GROUP_NAME from ADMINDA1.ADM_GROUP_USER where USER_ID=#{id}
+    </select>
+
+    <select id="selectLeaderByRequester" resultType="java.lang.String">
+      select DIRECT_SUPERVISOR from ORGDA1.ORG_EMPLOYEE where id=#{requester} and STATUS='1'
+    </select>
+
+    <select id="selectDeptAuditorByDeptId" resultType="java.lang.String">
+     select id from ORGDA1.ORG_EMPLOYEE where DEPT_ID=#{deptId} and STATUS='1'
+    </select>
+
+    <select id="selectGroupNameByFabCode" resultType="java.lang.String">
+     select GROUP_NAME from ACTDA1.BIZ_GROUP_AUDITOR where NODE_ID=#{nodeKey} and FORM_TYPE=#{formType} and DICT_VALUE=#{fab} and IS_AVAILABLE='Y'
+    </select>
+
+    <select id="selectGroupAuditorByGroupName" resultType="java.lang.String">
+     select distinct USER_ID from ADMINDA1.ADM_GROUP_USER where GROUP_NAME=#{groupName}
+    </select>
+
+    <select id="selectRoleAuditorByRoleId" resultType="java.lang.String">
+     select distinct USER_ID from ADMINDA1.ADM_ROLE_USER where ROLE_ID=#{roleId}
+    </select>
+
+</mapper>

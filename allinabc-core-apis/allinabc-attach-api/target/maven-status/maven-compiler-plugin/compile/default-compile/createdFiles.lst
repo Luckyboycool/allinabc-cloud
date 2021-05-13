@@ -1,0 +1,3 @@
+com/allinabc/cloud/attach/api/service/impl/feign/impl/ApiFeignAttachmentServiceImpl.class
+com/allinabc/cloud/attach/api/service/impl/feign/client/AttachmentServiceApi.class
+com/allinabc/cloud/attach/api/service/api/ApiAttachmentService.class

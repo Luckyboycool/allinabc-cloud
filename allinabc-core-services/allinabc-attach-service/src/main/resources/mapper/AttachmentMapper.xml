@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.allinabc.cloud.attach.mapper.AttachmentMapper">
+
+    <sql id="Base_Column_List" >
+    a.id as attachmentId,b.file_root_name, a.biz_id, a.biz_type, file_type, a.file_name,a.original_file_name, a.file_size, a.file_url,a.is_available, b.sys_code, b.res_code,  b.storage_code, b.upload_type, b.callback_before, b.callback_after
+  </sql>
+
+    <select id="selectAttachmentInfoById" resultType="com.allinabc.cloud.attach.pojo.dto.AttachmentInfoDTO">
+    select <include refid="Base_Column_List"></include>
+    from att_attachment a ,att_attachment_type b
+    where a.biz_type = b.biz_type and a.id=#{attachmentId,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectAttachmentInfoByBizIdAndBizType" parameterType="com.allinabc.cloud.attach.pojo.dto.AttachmentQueryParam" resultType="com.allinabc.cloud.attach.pojo.vo.AttachmentInfoResponse">
+    select <include refid="Base_Column_List"></include>
+    from att_attachment a ,att_attachment_type b
+     <where>
+        a.biz_type = b.biz_type
+        <if test="bizId!=null and bizId!=''">
+            and a.biz_id = #{bizId,jdbcType=VARCHAR}
+        </if>
+        <if test="bizType!=null and bizType!=''">
+            and a.biz_type = #{bizType,jdbcType=VARCHAR}
+        </if>
+        <if test="isAvailable!=null and isAvailable!=''">
+            and a.is_available = #{isAvailable,jdbcType=VARCHAR}
+        </if>
+     </where>
+    </select>
+    <select id="selectAttachmentInfoByBizId" resultType="com.allinabc.cloud.attach.pojo.po.Attachment">
+      select id , biz_id, biz_type, file_type, file_name, file_size, file_url, is_available, create_tm,update_tm from att_attachment
+      where is_available = 'Y' and biz_id=#{bizId,jdbcType=VARCHAR}
+    </select>
+
+    <update id="deleteAttachmentById">
+     update att_attachment
+     set
+     is_available ='N'
+     where id=#{id,jdbcType=VARCHAR}
+    </update>
+
+    <update id="deleteAttachmentByBizId">
+     update att_attachment
+     set
+     is_available ='N'
+     where biz_id=#{bizId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateBizIds">
+        <foreach collection="ls" item="item" separator=";">
+            update ATT_ATTACHMENT
+            <set>
+                <if test="item.bizId!=null and item.bizId!=''">
+                    BIZ_ID=#{item.bizId}
+                </if>
+            </set>
+            WHERE id = #{item.id}
+        </foreach>
+    </update>
+</mapper>

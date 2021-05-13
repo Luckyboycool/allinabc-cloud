@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>allinabc-parent</artifactId>
+        <groupId>com.allinabc</groupId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../allinabc-parent</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>allinabc-starters</artifactId>
+    <packaging>pom</packaging>
+    <name>Allinabc Cloud Starters</name>
+    <description>Allinabc Cloud Starters</description>
+
+    <modules>
+        <module>allinabc-redis-starter</module>
+        <module>allinabc-kafka-starter</module>
+<!--        <module>allinabc-kubernates-starter</module>-->
+        <module>allinabc-s3-starter</module>
+        <module>allinabc-web-starter</module>
+        <module>allinabc-form-starter</module>
+        <module>allinabc-log-starter</module>
+        <!--<module>allinabc-org-starter</module>-->
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+</project>

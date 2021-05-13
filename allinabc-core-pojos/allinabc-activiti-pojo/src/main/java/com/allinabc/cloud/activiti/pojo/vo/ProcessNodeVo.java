@@ -1,0 +1,25 @@
+package com.allinabc.cloud.activiti.pojo.vo;
+
+import lombok.Data;
+
+import java.util.List;
+
+@Data
+public class ProcessNodeVo {
+
+    // 节点id
+    private String nodeId;
+    // 节点名
+    private String name;
+    // 节点类型 0开始 1用户任务 2结束
+    private Integer type;
+    // 关联角色
+    private List<String> roleIds;
+    // 关联用户
+    private List<String> userIds;
+    // 关联部门
+    private List<String> deptIds;
+    // 选操作人的部门负责人
+    private Boolean deptHeader = false;
+
+}

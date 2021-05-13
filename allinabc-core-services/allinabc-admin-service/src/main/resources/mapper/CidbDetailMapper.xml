@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.allinabc.cloud.admin.mapper.CidbDetailMapper">
+  <resultMap id="BaseResultMap" type="com.allinabc.cloud.admin.pojo.po.CidbDetail">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="AREA" jdbcType="VARCHAR" property="area" />
+    <result column="DEPT" jdbcType="VARCHAR" property="dept" />
+    <result column="MEMBERS" jdbcType="VARCHAR" property="members" />
+    <result column="CUST_CODE" jdbcType="VARCHAR" property="custCode" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, AREA, DEPT, MEMBERS, CUST_CODE
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ADM_CIDB_DETAIL
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from ADM_CIDB_DETAIL
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insertSelective" keyColumn="ID" keyProperty="id" parameterType="com.allinabc.cloud.admin.pojo.po.CidbDetail" useGeneratedKeys="true">
+    insert into ADM_CIDB_DETAIL
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="area != null">
+        AREA,
+      </if>
+      <if test="dept != null">
+        DEPT,
+      </if>
+      <if test="members != null">
+        MEMBERS,
+      </if>
+      <if test="custCode != null">
+        CUST_CODE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="area != null">
+        #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="dept != null">
+        #{dept,jdbcType=VARCHAR},
+      </if>
+      <if test="members != null">
+        #{members,jdbcType=VARCHAR},
+      </if>
+      <if test="custCode != null">
+        #{custCode,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.allinabc.cloud.admin.pojo.po.CidbDetail">
+    update ADM_CIDB_DETAIL
+    <set>
+      <if test="area != null">
+        AREA = #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="dept != null">
+        DEPT = #{dept,jdbcType=VARCHAR},
+      </if>
+      <if test="members != null">
+        MEMBERS = #{members,jdbcType=VARCHAR},
+      </if>
+      <if test="custCode != null">
+        CUST_CODE = #{custCode,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+
+
+  <insert id="batchInsert" parameterType="com.allinabc.cloud.admin.pojo.po.CidbDetail">
+    INSERT ALL
+    <foreach collection="cidbDetails" item="item" index="index">
+      INTO ADMINDA1.ADM_CIDB_DETAIL
+      <trim prefix="(" suffix=")">
+        ID, AREA,DEPT,MEMBERS,CUST_CODE
+      </trim>
+      <trim prefix="VALUES (" suffix=")">
+        #{item.id,jdbcType=VARCHAR},
+        #{item.area,jdbcType=VARCHAR},
+        #{item.dept,jdbcType=VARCHAR},
+        #{item.members,jdbcType=VARCHAR},
+        #{item.custCode,jdbcType=VARCHAR}
+      </trim>
+    </foreach>
+    SELECT 1 FROM DUAL
+  </insert>
+</mapper>
